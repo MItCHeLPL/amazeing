@@ -17,8 +17,8 @@ public class MazeRenderer : MonoBehaviour
     [SerializeField]
     private int seed = 1;
 
-    [SerializeField]
-    private float GenerationAnimationDuration = 1.0f;
+    /*[SerializeField]
+    private float GenerationAnimationDuration = 1.0f;*/
 
     [SerializeField]
     private Transform wallPrefab = null;
@@ -35,10 +35,10 @@ public class MazeRenderer : MonoBehaviour
     void Start()
     {
         var maze = MazeGenerator.Generate(width, height, seed);
-        StartCoroutine(Draw(maze));
+        Draw(maze);
     }
 
-    private IEnumerator Draw(WallState[,] maze)
+    private void Draw(WallState[,] maze)
     {
         for (int i = 0; i < width; ++i)
         {
@@ -119,7 +119,7 @@ public class MazeRenderer : MonoBehaviour
                     }
                 }
 
-                yield return new WaitForSeconds((GenerationAnimationDuration / width) / height); //load maze for set amount of seconds
+                //yield return new WaitForSeconds((GenerationAnimationDuration / width) / height); //load maze for set amount of seconds
             }
         }
     }
