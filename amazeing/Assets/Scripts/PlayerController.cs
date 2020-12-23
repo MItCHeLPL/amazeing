@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
@@ -12,10 +13,15 @@ public class PlayerController : MonoBehaviour
 
     private Vector2 currentPosition;
 
+    private UIController ui;
+    private TextMeshProUGUI scoreValue;
+
 	private void Start()
 	{
-       GameObject.Find("UI").GetComponent<UIController>().GetPlayerComponent(gameObject);
-	}
+       ui = GameObject.Find("UI").GetComponent<UIController>();
+       ui.SetPlayerComponent(gameObject);
+        scoreValue = ui.GetScoreValue().GetComponent<TextMeshProUGUI>();
+    }
 
 	void Update()
     {

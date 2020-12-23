@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class MazeRenderer : MonoBehaviour
 {
@@ -12,10 +13,10 @@ public class MazeRenderer : MonoBehaviour
     [Range(4, 50)]
     private int height = 10;
 
-    private float size = 1.0f;
-
     [SerializeField]
     private int seed = 1;
+
+    private float size = 1.0f;
 
     /*[SerializeField]
     private float GenerationAnimationDuration = 1.0f;*/
@@ -32,11 +33,20 @@ public class MazeRenderer : MonoBehaviour
     [SerializeField]
     private Transform playerPrefab = null;
 
-    void Start()
+    /*[SerializeField]
+    private Transform keyPrefab = null;*/
+
+    [SerializeField]
+    private bool normalMode = true;
+
+    [SerializeField]
+    private TextMeshProUGUI lvlLabel;
+
+    /*void Start()
     {
         var maze = MazeGenerator.Generate(width, height, seed);
         Draw(maze);
-    }
+    }*/
 
     private void Draw(WallState[,] maze)
     {
@@ -57,6 +67,7 @@ public class MazeRenderer : MonoBehaviour
                 }
                 /*else if (i == 1 && j == height - 1)
                 {
+                    //Start
                     //open enterence bottom left
                     var start = Instantiate(startPrefab, transform) as Transform;
                     start.localPosition = position + new Vector3(0, 0, size / 2);
@@ -122,5 +133,15 @@ public class MazeRenderer : MonoBehaviour
                 //yield return new WaitForSeconds((GenerationAnimationDuration / width) / height); //load maze for set amount of seconds
             }
         }
+    }
+
+    public void StartGame(int lvlNumber, bool normal)
+	{
+        normalMode = normal;
+        lvlLabel.SetText(lvlNumber.ToString());
+
+        var maze = MazeGenerator.Generate(width, height, lvlNumber);
+
+        Draw(maze);
     }
 }
