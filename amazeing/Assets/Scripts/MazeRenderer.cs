@@ -13,8 +13,7 @@ public class MazeRenderer : MonoBehaviour
     [Range(4, 50)]
     private int height = 10;
 
-    [SerializeField]
-    private int seed = 1;
+    public int seed = 1;
 
     private float size = 1.0f;
 
@@ -36,8 +35,8 @@ public class MazeRenderer : MonoBehaviour
     /*[SerializeField]
     private Transform keyPrefab = null;*/
 
-    [SerializeField]
-    private bool normalMode = true;
+
+    public bool normalMode = true;
 
     [SerializeField]
     private TextMeshProUGUI lvlLabel;
@@ -138,10 +137,20 @@ public class MazeRenderer : MonoBehaviour
     public void StartGame(int lvlNumber, bool normal)
 	{
         normalMode = normal;
+        seed = lvlNumber;
+
         lvlLabel.SetText(lvlNumber.ToString());
 
-        var maze = MazeGenerator.Generate(width, height, lvlNumber);
+        var maze = MazeGenerator.Generate(width, height, seed);
 
         Draw(maze);
+    }
+
+    public void ClearGame()
+    {
+        for(int i=0; i < transform.childCount; i++)
+		{
+            Destroy(transform.GetChild(i).gameObject);
+		}
     }
 }

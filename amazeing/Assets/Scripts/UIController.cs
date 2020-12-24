@@ -58,6 +58,24 @@ public class UIController : MonoBehaviour
 		prevPanel = prevOW;
 	}
 
+	public void GoToPanel(GameObject gotoPanel)
+	{
+		gotoPanel.SetActive(true);
+		activePanel.SetActive(false);
+
+		prevPanel = activePanel;
+		activePanel = gotoPanel;
+	}
+
+	public void EnablePanel(GameObject panel)
+	{
+		panel.SetActive(true);
+	}
+	public void DisablePanel(GameObject panel)
+	{
+		panel.SetActive(false);
+	}
+
 
 	//Gameplay
 	public void LeftAction()
@@ -98,10 +116,10 @@ public class UIController : MonoBehaviour
 	{
 		prevPanel = gameplayoverlayPanel;
 
-		pausePanel.SetActive(true);
+		endgamePanel.SetActive(true);
 		gameplayoverlayPanel.SetActive(false);
 
-		activePanel = pausePanel;
+		activePanel = endgamePanel;
 	}
 
 
@@ -165,8 +183,34 @@ public class UIController : MonoBehaviour
 		prevPanel = menuPanel;
 
 		gameplayPanel.SetActive(true);
+		gameplayoverlayPanel.SetActive(true);
 		menuPanel.SetActive(false);
 
 		activePanel = gameplayPanel;
+	}
+
+	public void StartNextLevel()
+	{
+		int lvl = gameplayMazeRenderer.GetComponent<MazeRenderer>().seed;
+		bool normal = gameplayMazeRenderer.GetComponent<MazeRenderer>().normalMode;
+
+		ClearLevel();
+
+		StartLevel(lvl+1, normal);
+	}
+
+	public void RestartLevel()
+	{
+		int lvl = gameplayMazeRenderer.GetComponent<MazeRenderer>().seed;
+		bool normal = gameplayMazeRenderer.GetComponent<MazeRenderer>().normalMode;
+
+		ClearLevel();
+
+		StartLevel(lvl, normal);
+	}
+
+	public void ClearLevel()
+	{
+		gameplayMazeRenderer.GetComponent<MazeRenderer>().ClearGame();
 	}
 }

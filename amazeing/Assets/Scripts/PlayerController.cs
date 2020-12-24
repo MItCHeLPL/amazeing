@@ -42,7 +42,12 @@ public class PlayerController : MonoBehaviour
         }
         else if(hit.collider.tag == "Finish")
 		{
+            ui.EndGameAction();
             Debug.Log("Win");
 		}
+        else
+		{
+            Debug.Log(hit.collider.tag);
+        }
 	}
 }
