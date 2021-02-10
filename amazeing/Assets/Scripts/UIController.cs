@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class UIController : MonoBehaviour
 {
 	private PlayerController player;
 	[SerializeField] private GameObject gameplayMazeRenderer;
-
-	private GameObject prevPanel;
-	private GameObject activePanel;
 
 	//Panels
 	[SerializeField] private GameObject gameplayPanel;
@@ -22,6 +20,8 @@ public class UIController : MonoBehaviour
 	[SerializeField] private GameObject endgamePanel;
 
 	[SerializeField] private GameObject scoreValue;
+	[SerializeField] private GameObject endgamescoreValue;
+	[SerializeField] private GameObject pausescoreValue;
 
 	//menu
 	[SerializeField] private GameObject mainPanel;
@@ -33,40 +33,29 @@ public class UIController : MonoBehaviour
 	[SerializeField] private GameObject hardPanel;
 	[SerializeField] private GameObject generatePanel;
 
-	private void Start()
-	{
-		activePanel = menuPanel;
-	}
 
+	//Set player component on runtime after player is generated
 	public void SetPlayerComponent(GameObject go)
 	{
 		player = go.GetComponent<PlayerController>();
 	}
+
+	//Get score value tmpro
 	public GameObject GetScoreValue()
 	{
 		return scoreValue;
 	}
-
-
-	public void BackAction(GameObject prevOW)
+	public GameObject GetEndScoreValue()
 	{
-		prevPanel.SetActive(true);
-		activePanel.SetActive(false);
-
-		activePanel = prevPanel;
-
-		prevPanel = prevOW;
+		return endgamescoreValue;
+	}
+	public GameObject GetPauseScoreValue()
+	{
+		return pausescoreValue;
 	}
 
-	public void GoToPanel(GameObject gotoPanel)
-	{
-		gotoPanel.SetActive(true);
-		activePanel.SetActive(false);
 
-		prevPanel = activePanel;
-		activePanel = gotoPanel;
-	}
-
+	//Panel switching
 	public void EnablePanel(GameObject panel)
 	{
 		panel.SetActive(true);
@@ -77,7 +66,8 @@ public class UIController : MonoBehaviour
 	}
 
 
-	//Gameplay
+
+	//Gameplay controls
 	public void LeftAction()
 	{
 		player.MovePlayer(new Vector2(-1, 0));
@@ -99,94 +89,21 @@ public class UIController : MonoBehaviour
 	}
 
 
-	//Pause
-	public void PauseAction()
-	{
-		prevPanel = gameplayoverlayPanel;
-
-		pausePanel.SetActive(true);
-		gameplayoverlayPanel.SetActive(false);
-
-		activePanel = pausePanel;
-	}
-
-
-	//Endgame
+	//Level handling
 	public void EndGameAction()
 	{
-		prevPanel = gameplayoverlayPanel;
-
-		endgamePanel.SetActive(true);
-		gameplayoverlayPanel.SetActive(false);
-
-		activePanel = endgamePanel;
-	}
-
-
-	//Main Menu
-	public void PlayAction()
-	{
-		prevPanel = mainPanel;
-
-		playPanel.SetActive(true);
-		mainPanel.SetActive(false);
-
-		activePanel = playPanel;
-	}
-
-	public void AboutAction()
-	{
-		prevPanel = mainPanel;
-
-		aboutPanel.SetActive(true);
-		mainPanel.SetActive(false);
-
-		activePanel = aboutPanel;
-	}
-
-
-	//Play
-	public void NormalAction()
-	{
-		prevPanel = playPanel;
-
-		normalPanel.SetActive(true);
-		playPanel.SetActive(false);
-
-		activePanel = normalPanel;
-	}
-
-	public void HardAction()
-	{
-		prevPanel = playPanel;
-
-		hardPanel.SetActive(true);
-		playPanel.SetActive(false);
-
-		activePanel = hardPanel;
-	}
-
-	public void GenerateAction()
-	{
-		prevPanel = playPanel;
-
-		generatePanel.SetActive(true);
-		playPanel.SetActive(false);
-
-		activePanel = generatePanel;
+		EnablePanel(endgamePanel);
+		DisablePanel(gameplayoverlayPanel);
 	}
 
 	public void StartLevel(int lvlNumber, bool normal)
 	{
 		gameplayMazeRenderer.GetComponent<MazeRenderer>().StartGame(lvlNumber, normal);
 
-		prevPanel = menuPanel;
-
-		gameplayPanel.SetActive(true);
-		gameplayoverlayPanel.SetActive(true);
-		menuPanel.SetActive(false);
-
-		activePanel = gameplayPanel;
+		EnablePanel(gameplayPanel);
+		EnablePanel(gameplayoverlayPanel);
+		DisablePanel(menuPanel);
+		DisablePanel(mainPanel);
 	}
 
 	public void StartNextLevel()
@@ -212,5 +129,9 @@ public class UIController : MonoBehaviour
 	public void ClearLevel()
 	{
 		gameplayMazeRenderer.GetComponent<MazeRenderer>().ClearGame();
+
+		//Clear score counters
+		scoreValue.GetComponent<TextMeshProUGUI>().SetText("0");
+		endgamescoreValue.GetComponent<TextMeshProUGUI>().SetText("0");
 	}
 }

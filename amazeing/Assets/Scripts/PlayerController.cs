@@ -6,48 +6,56 @@ using TMPro;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
-    private float moveSpeed = 1.0f;
+    private float moveMultiplier = 1.0f;
 
     [SerializeField]
     private LayerMask blockLayer;
 
-    private Vector2 currentPosition;
-
+    //UI
     private UIController ui;
-    private TextMeshProUGUI scoreValue;
+    private TextMeshProUGUI scoreValueTMPro;
+    private TextMeshProUGUI endgamescoreValueTMPro;
+    private TextMeshProUGUI pausescoreValueTMPro;
+
+    public int score = 0;
 
 	private void Start()
 	{
        ui = GameObject.Find("UI").GetComponent<UIController>();
        ui.SetPlayerComponent(gameObject);
-        scoreValue = ui.GetScoreValue().GetComponent<TextMeshProUGUI>();
-    }
-
-	void Update()
-    {
-        currentPosition = new Vector2(transform.localPosition.x, transform.localPosition.y);
-
-        /*if (Mathf.Abs(Input.GetAxis("Horizontal")) == 1.0f || Mathf.Abs(Input.GetAxis("Vertical")) == 1.0f)
-		{
-            PlayerMove(new Vector2(Input.GetAxis("Horizontal")/2, Input.GetAxis("Vertical")/2));
-        }*/
+       scoreValueTMPro = ui.GetScoreValue().GetComponent<TextMeshProUGUI>();
+       endgamescoreValueTMPro = ui.GetEndScoreValue().GetComponent<TextMeshProUGUI>();
+       pausescoreValueTMPro = ui.GetPauseScoreValue().GetComponent<TextMeshProUGUI>();
     }
 
     public void MovePlayer(Vector2 dir)
 	{
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, .75f, blockLayer);
-        if (hit.collider == null)
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, .75f, blockLayer); //detect colisions
+
+        if (hit.collider == null) //when player is free to move
 		{
-            transform.localPosition += new Vector3(dir.x, 0, -dir.y);
+            transform.localPosition += new Vector3(dir.x * moveMultiplier, 0, -dir.y * moveMultiplier);
+            ChangeScoreBy(1);
         }
-        else if(hit.collider.tag == "Finish")
+        else if(hit.collider.tag == "Finish") //when player crosses the finish line
 		{
             ui.EndGameAction();
             Debug.Log("Win");
 		}
         else
 		{
-            Debug.Log(hit.collider.tag);
+            Debug.Log(hit.collider.tag); //when player hits something
         }
 	}
+
+    private void ChangeScoreBy(int x)
+	{
+        //Change score
+        score += x; 
+
+        //Change Ui
+        scoreValueTMPro.SetText(score.ToString()); 
+        endgamescoreValueTMPro.SetText(score.ToString());
+        pausescoreValueTMPro.SetText(score.ToString());
+    }
 }

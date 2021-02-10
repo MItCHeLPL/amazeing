@@ -6,11 +6,14 @@ using TMPro;
 
 public class LevelsGenerator : MonoBehaviour
 {
+    /*This script fills ui scrollview with generated levels*/
+
+
     [SerializeField]
     private GameObject buttonPrefab;
 
     [SerializeField]
-    private int levelAmount = 12;
+    private int levelAmount = 12; //Total lvl amount to generate
 
     [SerializeField]
     private int columnAmount = 4;
@@ -25,7 +28,7 @@ public class LevelsGenerator : MonoBehaviour
     private int baseYOffset = 50;
 
     [SerializeField]
-    private bool normalMode = true;
+    private bool normalMode = true; //generate buttons that start lvl in hard or normal mode
 
     [SerializeField]
     private UIController ui;

@@ -6,11 +6,16 @@ using TMPro;
 public class MazeRenderer : MonoBehaviour
 {
     [SerializeField]
-    [Range(4, 50)]
-    private int width = 10;
+    [Range(5, 30)]
+    private int mazeSize = 10;
 
     [SerializeField]
-    [Range(4, 50)]
+    private bool sizeBasedOnLvlAmount = true;
+
+    [SerializeField]
+    private int lvlAmount = 99;
+
+    private int width = 10;
     private int height = 10;
 
     public int seed = 1;
@@ -32,20 +37,38 @@ public class MazeRenderer : MonoBehaviour
     [SerializeField]
     private Transform playerPrefab = null;
 
+    private float lookAtXOffsetLeft = 0;
+    private float lookAtXOffsetRight = 0;
+    private float lookAtYOffsetTop = 0;
+    private float lookAtYOffsetBottom = 0;
+
+    [SerializeField]
+    private Camera cam = null;
+
     /*[SerializeField]
     private Transform keyPrefab = null;*/
-
 
     public bool normalMode = true;
 
     [SerializeField]
-    private TextMeshProUGUI lvlLabel;
+    private TextMeshProUGUI lvlLabel = null;
 
-    /*void Start()
+    [SerializeField]
+    private bool drawOnStart = false;
+    [SerializeField]
+    private bool colorize = true;
+
+    void Start()
     {
-        var maze = MazeGenerator.Generate(width, height, seed);
-        Draw(maze);
-    }*/
+        width = mazeSize;
+        height = mazeSize;
+
+        if (drawOnStart)
+		{
+            var maze = MazeGenerator.Generate(width, height, seed);
+            Draw(maze);
+        }
+    }
 
     private void Draw(WallState[,] maze)
     {
@@ -56,7 +79,7 @@ public class MazeRenderer : MonoBehaviour
                 var cell = maze[i, j];
                 var position = new Vector3(-width / 2 + i, 0, -height / 2 + j);
 
-                if (i == width - 2 && j == 0)
+                if (i == width - 2 && j == 0 && finishPrefab != null)
                 {
                     //open finish top right
                     var finish = Instantiate(finishPrefab, transform) as Transform;
@@ -81,7 +104,7 @@ public class MazeRenderer : MonoBehaviour
                 }*/
                 else
                 {
-                    if(i == 0 && j == height - 1)
+                    if(i == 0 && j == height - 1 && playerPrefab != null)
                     {
                         //place player
                         var player = Instantiate(playerPrefab, transform) as Transform;
@@ -96,6 +119,15 @@ public class MazeRenderer : MonoBehaviour
                         topWall.localPosition = position + new Vector3(0, 0, size / 2);
                         topWall.localScale = new Vector3(topWall.localScale.x, size, topWall.localScale.z);
                         topWall.localEulerAngles = new Vector3(90, 90, 0);
+                        if (colorize)
+                        {
+                            topWall.GetComponent<ColorRandomizer>().RandomizeColor(seed);
+                        }
+
+                        if (i == 0 && j == height - 1)
+                        {
+                            lookAtYOffsetTop = topWall.localPosition.z;
+                        }
                     }
 
                     if (cell.HasFlag(WallState.LEFT))
@@ -104,6 +136,15 @@ public class MazeRenderer : MonoBehaviour
                         leftWall.localPosition = position + new Vector3(-size / 2, 0, 0);
                         leftWall.localScale = new Vector3(leftWall.localScale.x, size, leftWall.localScale.z);
                         leftWall.localEulerAngles = new Vector3(90, 0, 0);
+                        if (colorize)
+                        {
+                            leftWall.GetComponent<ColorRandomizer>().RandomizeColor(seed);
+                        }
+
+                        if (i == 0 && j == 0)
+						{
+                            lookAtXOffsetLeft = leftWall.localPosition.x;
+                        }
                     }
 
                     if (i == width - 1)
@@ -114,6 +155,15 @@ public class MazeRenderer : MonoBehaviour
                             rightWall.localPosition = position + new Vector3(+size / 2, 0, 0);
                             rightWall.localScale = new Vector3(rightWall.localScale.x, size, rightWall.localScale.z);
                             rightWall.localEulerAngles = new Vector3(90, 0, 0);
+                            if (colorize)
+                            {
+                                rightWall.GetComponent<ColorRandomizer>().RandomizeColor(seed);
+                            }
+
+                            if (i == width - 1 && j == 0)
+                            {
+                                lookAtXOffsetRight = rightWall.localPosition.x;
+                            }
                         }
                     }
 
@@ -125,6 +175,16 @@ public class MazeRenderer : MonoBehaviour
                             bottomWall.localPosition = position + new Vector3(0, 0, -size / 2);
                             bottomWall.localScale = new Vector3(bottomWall.localScale.x, size, bottomWall.localScale.z);
                             bottomWall.localEulerAngles = new Vector3(90, 90, 0);
+                            if(colorize)
+							{
+                                bottomWall.GetComponent<ColorRandomizer>().RandomizeColor(seed);
+                            }
+                            
+
+                            if (i == 0 && j == 0)
+                            {
+                                lookAtYOffsetBottom = bottomWall.localPosition.z;
+                            }
                         }
                     }
                 }
@@ -136,6 +196,16 @@ public class MazeRenderer : MonoBehaviour
 
     public void StartGame(int lvlNumber, bool normal)
 	{
+        if(sizeBasedOnLvlAmount)
+		{
+            //TODO add curvature to this
+            //alpha = newMin + (val - minVal) * (newMax - newMin) / (maxVal - minVal);
+            mazeSize = 4 + (lvlNumber - 1) * (30 - 4) / (lvlAmount - 1);
+        }
+
+        width = mazeSize;
+        height = mazeSize;
+
         normalMode = normal;
         seed = lvlNumber;
 
@@ -144,6 +214,13 @@ public class MazeRenderer : MonoBehaviour
         var maze = MazeGenerator.Generate(width, height, seed);
 
         Draw(maze);
+
+        //fit whole maze into screen with margin
+        cam.orthographicSize = mazeSize + 0.5f;
+
+        //This fixes centering by offseting camera X axis by difference between maze outer walls x position
+        //fix Y offset
+        cam.transform.position = new Vector3((lookAtXOffsetLeft + lookAtXOffsetRight) * 0.5f, mazeSize % 2 == 0 ? (lookAtYOffsetTop + lookAtYOffsetBottom) * 0.5f : (lookAtYOffsetTop + lookAtYOffsetBottom) * 0.5f - 0.5f, cam.transform.position.z);
     }
 
     public void ClearGame()
