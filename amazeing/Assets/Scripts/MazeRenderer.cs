@@ -200,7 +200,7 @@ public class MazeRenderer : MonoBehaviour
 		{
             //TODO add curvature to this
             //alpha = newMin + (val - minVal) * (newMax - newMin) / (maxVal - minVal);
-            mazeSize = 4 + (lvlNumber - 1) * (30 - 4) / (lvlAmount - 1);
+            mazeSize = 5 + (lvlNumber - 1) * (30 - 4) / (lvlAmount - 1);
         }
 
         width = mazeSize;
@@ -216,10 +216,9 @@ public class MazeRenderer : MonoBehaviour
         Draw(maze);
 
         //fit whole maze into screen with margin
-        cam.orthographicSize = mazeSize + 0.5f;
+        cam.orthographicSize = mazeSize + 2.0f;
 
         //This fixes centering by offseting camera X axis by difference between maze outer walls x position
-        //fix Y offset
         cam.transform.position = new Vector3((lookAtXOffsetLeft + lookAtXOffsetRight) * 0.5f, mazeSize % 2 == 0 ? (lookAtYOffsetTop + lookAtYOffsetBottom) * 0.5f : (lookAtYOffsetTop + lookAtYOffsetBottom) * 0.5f - 0.5f, cam.transform.position.z);
     }
 
@@ -229,5 +228,7 @@ public class MazeRenderer : MonoBehaviour
 		{
             Destroy(transform.GetChild(i).gameObject);
 		}
+
+        cam.orthographicSize = 12; //main menu background maze
     }
 }

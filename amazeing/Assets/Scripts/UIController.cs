@@ -27,6 +27,7 @@ public class UIController : MonoBehaviour
 	[SerializeField] private GameObject mainPanel;
 	[SerializeField] private GameObject playPanel;
 	[SerializeField] private GameObject aboutPanel;
+	[SerializeField] private GameObject menuBackground;
 
 	//play
 	[SerializeField] private GameObject normalPanel;
@@ -104,6 +105,7 @@ public class UIController : MonoBehaviour
 		EnablePanel(gameplayoverlayPanel);
 		DisablePanel(menuPanel);
 		DisablePanel(mainPanel);
+		DisablePanel(menuBackground);
 	}
 
 	public void StartNextLevel()
