@@ -19,9 +19,12 @@ public class UIController : MonoBehaviour
 	[SerializeField] private GameObject pausePanel;
 	[SerializeField] private GameObject endgamePanel;
 
-	[SerializeField] private GameObject scoreValue;
-	[SerializeField] private GameObject endgamescoreValue;
-	[SerializeField] private GameObject pausescoreValue;
+	public GameObject keyIconEnabled;
+	public GameObject keyIconDisabled;
+
+	public GameObject scoreValue;
+	public GameObject endgamescoreValue;
+	public GameObject pausescoreValue;
 
 	//menu
 	[SerializeField] private GameObject mainPanel;
@@ -41,20 +44,6 @@ public class UIController : MonoBehaviour
 		player = go.GetComponent<PlayerController>();
 	}
 
-	//Get score value tmpro
-	public GameObject GetScoreValue()
-	{
-		return scoreValue;
-	}
-	public GameObject GetEndScoreValue()
-	{
-		return endgamescoreValue;
-	}
-	public GameObject GetPauseScoreValue()
-	{
-		return pausescoreValue;
-	}
-
 
 	//Panel switching
 	public void EnablePanel(GameObject panel)
@@ -67,8 +56,7 @@ public class UIController : MonoBehaviour
 	}
 
 
-
-	//Gameplay controls
+	//Player control buttons
 	public void LeftAction()
 	{
 		player.MovePlayer(new Vector2(-1, 0));
@@ -97,9 +85,9 @@ public class UIController : MonoBehaviour
 		DisablePanel(gameplayoverlayPanel);
 	}
 
-	public void StartLevel(int lvlNumber, bool normal)
+	public void StartLevel(int lvlNumber, int levelAmount, bool normal)
 	{
-		gameplayMazeRenderer.GetComponent<MazeRenderer>().StartGame(lvlNumber, normal);
+		gameplayMazeRenderer.GetComponent<MazeRenderer>().StartGame(lvlNumber, levelAmount, normal);
 
 		EnablePanel(gameplayPanel);
 		EnablePanel(gameplayoverlayPanel);
@@ -110,27 +98,32 @@ public class UIController : MonoBehaviour
 
 	public void StartNextLevel()
 	{
-		int lvl = gameplayMazeRenderer.GetComponent<MazeRenderer>().seed;
+		int lvl = gameplayMazeRenderer.GetComponent<MazeRenderer>().mazeSeed;
+		int lvlCount = gameplayMazeRenderer.GetComponent<MazeRenderer>().lvlCount;
 		bool normal = gameplayMazeRenderer.GetComponent<MazeRenderer>().normalMode;
 
 		ClearLevel();
 
-		StartLevel(lvl+1, normal);
+		StartLevel(lvl+1, lvlCount, normal);
 	}
 
 	public void RestartLevel()
 	{
-		int lvl = gameplayMazeRenderer.GetComponent<MazeRenderer>().seed;
+		int lvl = gameplayMazeRenderer.GetComponent<MazeRenderer>().mazeSeed;
+		int lvlCount = gameplayMazeRenderer.GetComponent<MazeRenderer>().lvlCount;
 		bool normal = gameplayMazeRenderer.GetComponent<MazeRenderer>().normalMode;
 
 		ClearLevel();
 
-		StartLevel(lvl, normal);
+		StartLevel(lvl, lvlCount, normal);
 	}
 
 	public void ClearLevel()
 	{
 		gameplayMazeRenderer.GetComponent<MazeRenderer>().ClearGame();
+
+		EnablePanel(keyIconDisabled);
+		DisablePanel(keyIconEnabled);
 
 		//Clear score counters
 		scoreValue.GetComponent<TextMeshProUGUI>().SetText("0");

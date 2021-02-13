@@ -7,9 +7,8 @@ public class ColorRandomizer : MonoBehaviour
 {
     private SpriteRenderer sr;
 
-    [SerializeField]
-    [Range(0,1)]
-    private float colorCap = .7f;
+    //Cap color so it isn't too bright
+    [SerializeField] [Range(0,1)] private float colorCap = .75f;
 
     private Color color;
 

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3954498601892222936}
   - component: {fileID: 3954498601892222937}
   - component: {fileID: -25045017316846783}
+  - component: {fileID: -5030262222996642373}
   m_Layer: 7
   m_Name: Finish
   m_TagString: Finish
@@ -51,7 +52,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 41214a2b3d0b44e4eb294d6d9ec1000e, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -109,3 +110,16 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &-5030262222996642373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3954498601892222934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fd9cfa9ac3fa034dab5a7e39d4b058c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colorCap: 0.75

@@ -5,11 +5,11 @@ using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField]
-    private float moveMultiplier = 1.0f;
+    [SerializeField] private float moveMultiplier = 1.0f;
 
-    [SerializeField]
-    private LayerMask blockLayer;
+    [SerializeField] private LayerMask blockLayer;
+
+    public bool hasKey = false;
 
     //UI
     private UIController ui;
@@ -17,15 +17,22 @@ public class PlayerController : MonoBehaviour
     private TextMeshProUGUI endgamescoreValueTMPro;
     private TextMeshProUGUI pausescoreValueTMPro;
 
-    public int score = 0;
+    private MazeRenderer mazeRenderer;
+
+    [HideInInspector] public int score = 0;
 
 	private void Start()
 	{
-       ui = GameObject.Find("UI").GetComponent<UIController>();
-       ui.SetPlayerComponent(gameObject);
-       scoreValueTMPro = ui.GetScoreValue().GetComponent<TextMeshProUGUI>();
-       endgamescoreValueTMPro = ui.GetEndScoreValue().GetComponent<TextMeshProUGUI>();
-       pausescoreValueTMPro = ui.GetPauseScoreValue().GetComponent<TextMeshProUGUI>();
+        //Get UI
+        ui = GameObject.Find("UI").GetComponent<UIController>();
+        ui.SetPlayerComponent(gameObject);
+
+        mazeRenderer = GetComponentInParent<MazeRenderer>();
+
+        //Get UI score tmpro
+        scoreValueTMPro = ui.scoreValue.GetComponent<TextMeshProUGUI>();
+        endgamescoreValueTMPro = ui.endgamescoreValue.GetComponent<TextMeshProUGUI>();
+        pausescoreValueTMPro = ui.pausescoreValue.GetComponent<TextMeshProUGUI>();
     }
 
     public void MovePlayer(Vector2 dir)
@@ -42,11 +49,27 @@ public class PlayerController : MonoBehaviour
             ui.EndGameAction();
             Debug.Log("Win");
 		}
-        else
-		{
-            Debug.Log(hit.collider.tag); //when player hits something
+        else if (hit.collider.tag == "Key") //when player collected key
+        {
+            //Move into key position
+            transform.localPosition += new Vector3(dir.x * moveMultiplier, 0, -dir.y * moveMultiplier);
+            ChangeScoreBy(1);
+
+            hasKey = true;
+
+            //Unlock finish
+            mazeRenderer.UnlockFinish();
+
+            //Change UI
+            ui.EnablePanel(ui.keyIconEnabled);
+            ui.DisablePanel(ui.keyIconDisabled);
+
+            //Destroy key GO
+            Destroy(hit.transform.gameObject);
+
+            Debug.Log("Got key");
         }
-	}
+    }
 
     private void ChangeScoreBy(int x)
 	{

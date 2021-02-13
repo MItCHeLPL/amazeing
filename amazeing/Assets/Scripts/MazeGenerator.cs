@@ -4,7 +4,8 @@ using UnityEngine;
 using System;
 
 
-/*CREATED BY: https://github.com/gamedolphin/youtube_unity_maze*/
+/* Maze generation algorythm using Recursive Backtracker
+ * Created By: https://github.com/gamedolphin/youtube_unity_maze */
 
 [Flags]
 public enum WallState
