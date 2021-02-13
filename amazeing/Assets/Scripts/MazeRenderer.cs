@@ -52,8 +52,20 @@ public class MazeRenderer : MonoBehaviour
     private float lookAtYOffsetTop = 0;
     private float lookAtYOffsetBottom = 0;
 
+    //Key placement
+    private float x = 0;
+    private int y1 = 0;
+    private int y2 = 0;
+    private int z1 = 0;
+    private int z2 = 0;
+
+    //Finish line
     private Transform finish;
     [SerializeField] private Color enabledFinishColor;
+
+    //Game Timer
+    [HideInInspector] public float gameTime = 0.0f;
+    private IEnumerator gameTimer;
 
     void Start()
     {
@@ -80,11 +92,24 @@ public class MazeRenderer : MonoBehaviour
         * j=0 - top
         * j=mazeHeight - bottom*/
 
-        //Randomize position for key placement
-        Random.InitState(mazeSeed); //always same position per level
-        float x = Random.Range(0.0f, 1.0f);
-        int y = (int)Mathf.Round(Random.Range(0, Mathf.Round(mazeWidth / 2)));
-        int z = (int)Mathf.Round(Random.Range(Mathf.Round(mazeWidth / 2), mazeWidth - 1));
+        if(keyPrefab != null)
+		{
+            //Randomize position for key placement
+            Random.InitState(mazeSeed); //always same position per level
+            x = Random.Range(0.0f, 1.0f);
+            y1 = (int)Mathf.Round(Random.Range(0, Mathf.Round(mazeWidth / 2)));
+
+            Random.InitState(mazeSeed*3);
+            y2 = (int)Mathf.Round(Random.Range(0, Mathf.Round(mazeWidth / 2)));
+
+            Random.InitState(mazeSeed);
+            z1 = (int)Mathf.Round(Random.Range(Mathf.Round(mazeWidth / 2), mazeWidth - 1));
+
+            Random.InitState(mazeSeed*3);
+            z2 = (int)Mathf.Round(Random.Range(Mathf.Round(mazeWidth / 2), mazeWidth - 1));
+
+            Random.InitState(mazeSeed);
+        }
 
         for (int i = 0; i < mazeWidth; ++i)
         {
@@ -122,15 +147,17 @@ public class MazeRenderer : MonoBehaviour
                     10 | if x <= 0.5
                     01 | if x > 0.5
                     (width: 0:size/2(y) && height: 0:size/2(y) && x <= 0.5)  ||  (width: size/2:size(z) && height: size/2:size(z) && x > 0.5)*/
-                    bool b1 = i == y && j == y && x <= 0.5f;
-                    bool b2 = i == z && j == z && x > 0.5f;
-                    if ((b1 || b2) && keyPrefab != null)
-                    {
-                        var key = Instantiate(keyPrefab, transform) as Transform;
-                        key.localPosition = position + new Vector3(0, 0, 0);
-                        key.localEulerAngles = new Vector3(90, 0, 0);
+                    if(keyPrefab != null)
+					{
+                        bool b1 = i == y1 && j == y2 && x <= 0.5f;
+                        bool b2 = i == z1 && j == z2 && x > 0.5f;
+                        if (b1 || b2)
+                        {
+                            var key = Instantiate(keyPrefab, transform) as Transform;
+                            key.localPosition = position + new Vector3(0, 0, 0);
+                            key.localEulerAngles = new Vector3(90, 0, 0);
+                        }
                     }
-
 
                     //Place walls
                     if (cell.HasFlag(WallState.UP))
@@ -253,11 +280,41 @@ public class MazeRenderer : MonoBehaviour
 
         Draw(maze); //Draw maze
 
+        //Start counting the time
+        gameTimer = GameTimer();
+        StartCoroutine(gameTimer);
+
         //change camera view size to fit entire maze inside
         cam.orthographicSize = mazeSize + 2.0f;
 
         //This fixes centering by offseting camera X and Y axis by difference between maze outer walls position
         cam.transform.position = new Vector3((lookAtXOffsetLeft + lookAtXOffsetRight) * 0.5f, mazeSize % 2 == 0 ? (lookAtYOffsetTop + lookAtYOffsetBottom) * 0.5f : (lookAtYOffsetTop + lookAtYOffsetBottom) * 0.5f - 0.5f, cam.transform.position.z);
+    }
+
+    public void PauseGame()
+	{
+        StopCoroutine(gameTimer);
+	}
+    public void ResumeeGame()
+    {
+        gameTimer = GameTimer();
+        StartCoroutine(gameTimer);
+    }
+
+    public void StopGame()
+	{
+        //Stop game timer
+        StopCoroutine(gameTimer);
+    }
+
+    private IEnumerator GameTimer()
+	{
+        while(true)
+		{
+            gameTime += Time.unscaledDeltaTime;
+            Debug.Log(gameTime);
+            yield return null;
+        }
     }
 
     public void UnlockFinish()
@@ -269,11 +326,16 @@ public class MazeRenderer : MonoBehaviour
 
     public void ClearGame()
     {
+        StopGame();
+
         //Clear maze
-        for(int i=0; i < transform.childCount; i++)
+        for (int i=0; i < transform.childCount; i++)
 		{
             Destroy(transform.GetChild(i).gameObject);
 		}
+
+        //Reset game timer
+        gameTime = 0.0f;
 
         //main menu background maze, 12 is best for menu
         cam.orthographicSize = 12; 
