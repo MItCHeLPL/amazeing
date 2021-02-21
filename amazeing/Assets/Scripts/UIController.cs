@@ -23,8 +23,10 @@ public class UIController : MonoBehaviour
 	public GameObject keyIconDisabled;
 
 	public GameObject scoreValue;
-	public GameObject endgamescoreValue;
-	public GameObject pausescoreValue;
+	public GameObject endgameScoreValue;
+	public GameObject pauseScoreValue;
+	public GameObject endgameTimeValue;
+	public GameObject pauseTimeValue;
 
 	//menu
 	[SerializeField] private GameObject mainPanel;
@@ -34,7 +36,6 @@ public class UIController : MonoBehaviour
 	//play
 	[SerializeField] private GameObject normalPanel;
 	[SerializeField] private GameObject hardPanel;
-	[SerializeField] private GameObject generatePanel;
 
 
 	//Set player component on runtime after player is generated
@@ -82,6 +83,8 @@ public class UIController : MonoBehaviour
 	{
 		gameplayMazeRenderer.GetComponent<MazeRenderer>().StopGame();
 
+		UpdateTimeValues();
+
 		EnablePanel(endgamePanel);
 		DisablePanel(gameplayoverlayPanel);
 	}
@@ -127,6 +130,23 @@ public class UIController : MonoBehaviour
 
 		//Clear score counters
 		scoreValue.GetComponent<TextMeshProUGUI>().SetText("0");
-		endgamescoreValue.GetComponent<TextMeshProUGUI>().SetText("0");
+		endgameScoreValue.GetComponent<TextMeshProUGUI>().SetText("0");
+
+		//Clear time counters
+		pauseTimeValue.GetComponent<TextMeshProUGUI>().SetText("0");
+		endgameTimeValue.GetComponent<TextMeshProUGUI>().SetText("0");
+	}
+
+	public void UpdateTimeValues()
+	{
+		//Get Time
+		float time = gameplayMazeRenderer.GetComponent<MazeRenderer>().gameTime;
+
+		//Round to 2 decimap places
+		time = (Mathf.Round(time * 100)) / 100.0f;
+
+		//Update value text
+		pauseTimeValue.GetComponent<TextMeshProUGUI>().SetText(time.ToString() + " sec");
+		endgameTimeValue.GetComponent<TextMeshProUGUI>().SetText(time.ToString() + " sec");
 	}
 }

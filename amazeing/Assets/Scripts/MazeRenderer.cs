@@ -10,12 +10,12 @@ public class MazeRenderer : MonoBehaviour
     [SerializeField] [Range(5, 50)] private int maxMazeSize = 25;
 
     //Maze size is based on size curve rather than set maze size
-    [SerializeField] private bool sizeBasedOnSizeCurve = true;
+    public bool sizeBasedOnSizeCurve = true;
     [SerializeField] private AnimationCurve sizeCurve;
 
     //if true use mazeSize and generate square maze rather than seperating width and height
     [SerializeField] private bool UseMazeSize = true;
-    [SerializeField] [Range(5, 50)] private int mazeSize = 10;
+    [Range(5, 50)] public int mazeSize = 10;
 
     [SerializeField] [Range(5, 50)] private int mazeWidth = 10;
     [SerializeField] [Range(5, 50)] private int mazeHeight = 10;
@@ -43,6 +43,7 @@ public class MazeRenderer : MonoBehaviour
     [SerializeField] private Transform finishPrefab = null; //Optional
     [SerializeField] private Transform keyPrefab = null; //Optional
     [SerializeField] private Transform playerPrefab = null; //Optional
+    [SerializeField] private Transform aiPrefab = null; //Optional
     [SerializeField] private TextMeshProUGUI lvlLabel = null; //Optional
     
 
@@ -128,7 +129,7 @@ public class MazeRenderer : MonoBehaviour
                     finish.localEulerAngles = new Vector3(90, 90, 0);
 
                     //Disable finish 
-                    finish.tag = "Wall"; //Disable until player collects key
+                    finish.CompareTag("Wall"); //Disable until player collects key
                     finish.GetComponent<ColorRandomizer>().RandomizeColor(mazeSeed);//Hide finish
                 }
                 else
@@ -140,6 +141,13 @@ public class MazeRenderer : MonoBehaviour
                         var player = Instantiate(playerPrefab, transform) as Transform;
                         player.localPosition = position + new Vector3(0, 0, 0);
                         player.localEulerAngles = new Vector3(90, 0, 0);
+
+                        if(normalMode == false)
+						{
+                            var ai = Instantiate(aiPrefab, transform) as Transform;
+                            ai.localPosition = position + new Vector3(0, 0, 0);
+                            ai.localEulerAngles = new Vector3(90, 0, 0);
+                        }
                     }
 
                     //Instantiate key
@@ -248,6 +256,12 @@ public class MazeRenderer : MonoBehaviour
                 }
             }
         }
+
+        //Whole maze is drawn
+        if (normalMode == false)
+        {
+            Invoke("RecalculateAIPathfinding", .5f);
+        }
     }
 
     public void StartGame(int lvlNumber, int lvlAmount, bool normal)
@@ -312,14 +326,13 @@ public class MazeRenderer : MonoBehaviour
         while(true)
 		{
             gameTime += Time.unscaledDeltaTime;
-            Debug.Log(gameTime);
             yield return null;
         }
     }
 
     public void UnlockFinish()
 	{
-        finish.tag = "Finish"; //Enable finish
+        finish.CompareTag("Finish"); //Enable finish
 
         finish.GetComponent<SpriteRenderer>().color = enabledFinishColor; //Change color to enabled
     }
@@ -340,4 +353,9 @@ public class MazeRenderer : MonoBehaviour
         //main menu background maze, 12 is best for menu
         cam.orthographicSize = 12; 
     }
+
+    public void RecalculateAIPathfinding()
+	{
+        AstarPath.active.Scan();
+	}
 }

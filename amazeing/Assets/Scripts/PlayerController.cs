@@ -31,8 +31,8 @@ public class PlayerController : MonoBehaviour
 
         //Get UI score tmpro
         scoreValueTMPro = ui.scoreValue.GetComponent<TextMeshProUGUI>();
-        endgamescoreValueTMPro = ui.endgamescoreValue.GetComponent<TextMeshProUGUI>();
-        pausescoreValueTMPro = ui.pausescoreValue.GetComponent<TextMeshProUGUI>();
+        endgamescoreValueTMPro = ui.endgameScoreValue.GetComponent<TextMeshProUGUI>();
+        pausescoreValueTMPro = ui.pauseScoreValue.GetComponent<TextMeshProUGUI>();
     }
 
     public void MovePlayer(Vector2 dir)
@@ -44,12 +44,12 @@ public class PlayerController : MonoBehaviour
             transform.localPosition += new Vector3(dir.x * moveMultiplier, 0, -dir.y * moveMultiplier);
             ChangeScoreBy(1);
         }
-        else if(hit.collider.tag == "Finish") //when player crosses the finish line
+        else if(hit.collider.CompareTag("Finish")) //when player crosses the finish line
 		{
             ui.EndGameAction();
             Debug.Log("Win");
 		}
-        else if (hit.collider.tag == "Key") //when player collected key
+        else if (hit.collider.CompareTag("Key")) //when player collected key
         {
             //Move into key position
             transform.localPosition += new Vector3(dir.x * moveMultiplier, 0, -dir.y * moveMultiplier);
