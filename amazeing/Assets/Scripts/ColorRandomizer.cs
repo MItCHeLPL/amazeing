@@ -12,6 +12,29 @@ public class ColorRandomizer : MonoBehaviour
 
     private Color color;
 
+    [SerializeField] private bool randomizeOnStart = false;
+
+	private void Start()
+	{
+	    if(randomizeOnStart)
+		{
+            RandomizeColor();
+		}
+	}
+
+	public void RandomizeColor()
+    {
+        sr = GetComponent<SpriteRenderer>();
+        color = new Color(0, 0, 0, 1); //base color
+
+        color.r = Random.Range(0, colorCap); //random chanell consistent between walls
+
+        color.g = Random.Range(0, colorCap);
+
+        color.b = Random.Range(0, colorCap);
+
+        sr.color = color; //assign color
+    }
     public void RandomizeColor(int seed)
 	{
         sr = GetComponent<SpriteRenderer>();

@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7145199567227711948
 Transform:
   m_ObjectHideFlags: 0
@@ -95,6 +95,7 @@ GameObject:
   - component: {fileID: 6297964927924478378}
   - component: {fileID: 7288883822112846555}
   - component: {fileID: 6863908335494607874}
+  - component: {fileID: 638057801454711994}
   m_Layer: 0
   m_Name: AI
   m_TagString: AI
@@ -160,9 +161,9 @@ MonoBehaviour:
   version: 2
   radius: 0.5
   height: 2
-  repathRate: 1
+  repathRate: 0.1
   canSearch: 1
-  canMove: 1
+  canMove: 0
   maxSpeed: 1
   gravity: {x: 0, y: 0, z: 0}
   groundMask:
@@ -202,7 +203,7 @@ CircleCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5399379057740430999}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
@@ -211,3 +212,17 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!114 &638057801454711994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5399379057740430999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 714ab2ea35e74bf4281eed55630c22dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nodeSize: 0.5
+  pathLength: 0

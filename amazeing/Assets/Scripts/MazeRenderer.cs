@@ -41,9 +41,13 @@ public class MazeRenderer : MonoBehaviour
     [SerializeField] private Camera cam = null;
     [SerializeField] private Transform wallPrefab = null; 
     [SerializeField] private Transform finishPrefab = null; //Optional
+    [HideInInspector] public Transform finish;
     [SerializeField] private Transform keyPrefab = null; //Optional
+    [HideInInspector] public Transform key;
     [SerializeField] private Transform playerPrefab = null; //Optional
+    [HideInInspector] public Transform player;
     [SerializeField] private Transform aiPrefab = null; //Optional
+    [HideInInspector] public Transform ai;
     [SerializeField] private TextMeshProUGUI lvlLabel = null; //Optional
     
 
@@ -60,8 +64,6 @@ public class MazeRenderer : MonoBehaviour
     private int z1 = 0;
     private int z2 = 0;
 
-    //Finish line
-    private Transform finish;
     [SerializeField] private Color enabledFinishColor;
 
     //Game Timer
@@ -138,13 +140,13 @@ public class MazeRenderer : MonoBehaviour
                     //Bottom left
                     if(i == 0 && j == mazeHeight - 1 && playerPrefab != null)
                     {
-                        var player = Instantiate(playerPrefab, transform) as Transform;
+                        player = Instantiate(playerPrefab, transform) as Transform;
                         player.localPosition = position + new Vector3(0, 0, 0);
                         player.localEulerAngles = new Vector3(90, 0, 0);
 
                         if(normalMode == false)
 						{
-                            var ai = Instantiate(aiPrefab, transform) as Transform;
+                            ai = Instantiate(aiPrefab, transform) as Transform;
                             ai.localPosition = position + new Vector3(0, 0, 0);
                             ai.localEulerAngles = new Vector3(90, 0, 0);
                         }
@@ -161,7 +163,7 @@ public class MazeRenderer : MonoBehaviour
                         bool b2 = i == z1 && j == z2 && x > 0.5f;
                         if (b1 || b2)
                         {
-                            var key = Instantiate(keyPrefab, transform) as Transform;
+                            key = Instantiate(keyPrefab, transform) as Transform;
                             key.localPosition = position + new Vector3(0, 0, 0);
                             key.localEulerAngles = new Vector3(90, 0, 0);
                         }
@@ -260,7 +262,7 @@ public class MazeRenderer : MonoBehaviour
         //Whole maze is drawn
         if (normalMode == false)
         {
-            Invoke("RecalculateAIPathfinding", .5f);
+            Invoke("RecalculateAIPathfinding", .25f); //Calculate path to finish when whole maze is drawn
         }
     }
 
@@ -287,22 +289,23 @@ public class MazeRenderer : MonoBehaviour
 
         if(lvlLabel != null)
 		{
+            lvlLabel.gameObject.SetActive(true);
             lvlLabel.SetText(lvlNumber.ToString()); //Display lvl number
         }
 
         var maze = MazeGenerator.Generate(mazeWidth, mazeHeight, mazeSeed); //Generate maze
 
         Draw(maze); //Draw maze
-
-        //Start counting the time
-        gameTimer = GameTimer();
-        StartCoroutine(gameTimer);
-
+        
         //change camera view size to fit entire maze inside
         cam.orthographicSize = mazeSize + 2.0f;
 
         //This fixes centering by offseting camera X and Y axis by difference between maze outer walls position
         cam.transform.position = new Vector3((lookAtXOffsetLeft + lookAtXOffsetRight) * 0.5f, mazeSize % 2 == 0 ? (lookAtYOffsetTop + lookAtYOffsetBottom) * 0.5f : (lookAtYOffsetTop + lookAtYOffsetBottom) * 0.5f - 0.5f, cam.transform.position.z);
+
+        //Start counting the time
+        gameTimer = GameTimer();
+        StartCoroutine(gameTimer);
     }
 
     public void PauseGame()
@@ -351,11 +354,16 @@ public class MazeRenderer : MonoBehaviour
         gameTime = 0.0f;
 
         //main menu background maze, 12 is best for menu
-        cam.orthographicSize = 12; 
+        cam.orthographicSize = 12;
+
+        if (lvlLabel != null)
+        {
+            lvlLabel.gameObject.SetActive(false);
+        }
     }
 
     public void RecalculateAIPathfinding()
 	{
-        AstarPath.active.Scan();
-	}
+        StartCoroutine(ai.GetComponent<AIController>().CalculatePathLength()); //Start ai path calculation
+    }
 }

@@ -6159,7 +6159,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1121193179
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6226,8 +6226,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 500
-  m_fontSizeBase: 500
+  m_fontSize: 400
+  m_fontSizeBase: 400
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -9210,9 +9210,13 @@ MonoBehaviour:
   cam: {fileID: 519420031}
   wallPrefab: {fileID: 3920902015383458240, guid: 176bc27784531ed40885fc0f1b91eb2c, type: 3}
   finishPrefab: {fileID: 3954498601892222936, guid: 0ac0dd66a8b18ac41ac1898cd3c9b4af, type: 3}
+  finish: {fileID: 0}
   keyPrefab: {fileID: 5399379057740430985, guid: 5570c3c40a5d5cd40bf618afe8eeac65, type: 3}
+  key: {fileID: 0}
   playerPrefab: {fileID: 5399379057740430985, guid: cf49da917ee44394a9482caaa6535002, type: 3}
+  player: {fileID: 0}
   aiPrefab: {fileID: 5399379057740430985, guid: 2fb50ca55b3444349a11f55b27c89bb9, type: 3}
+  ai: {fileID: 0}
   lvlLabel: {fileID: 1121193180}
   enabledFinishColor: {r: 0, g: 1, b: 0, a: 1}
   gameTime: 0
