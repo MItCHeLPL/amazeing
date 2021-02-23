@@ -9,7 +9,7 @@ public class GameMenager : MonoBehaviour
 	public CameraController camController = null;
 
     public int lvlCount = 100; //Total lvl count
-    public bool normalMode = true; //start game in normal/hard mode
+    
     public int score = 0; //Player score
 
     public float gameTime = 0.0f; //Game Timer
@@ -17,15 +17,30 @@ public class GameMenager : MonoBehaviour
 
     public int pathLength = 0; //Total path to finish through key position
 
-    public void StartGame(int lvlNumber, bool normal) //TODO Convert to IEnumerator
+    //Start Level
+    public void StartGame(int lvlNumber, bool normal)
 	{
-        bool maze = mazeRenderer.GenerateMazeForGameplay(lvlNumber, lvlCount, normal);
+        StartCoroutine(StartGameCoroutine(lvlNumber, normal)); //Start game starter coroutine
+    }
+    private IEnumerator StartGameCoroutine(int lvlNumber, bool normal)
+	{
+
+        //TODO ENABLE LOADING SCREEN
+
+
+        bool maze = false;
+        maze = mazeRenderer.GenerateMazeForGameplay(lvlNumber, lvlCount, normal); //Generate maze
+
+        yield return new WaitUntil(() => maze); //Wait until maze is fully generated
 
         //if race mode
-        if(normal == false)
+        if (normal == false)
 		{
-            //Get path length
-            pathLength = (int)mazeRenderer.ai.GetComponent<AIController>().pathLength;
+            mazeRenderer.RecalculateAIPathfinding(); //Calculate Path
+
+            yield return new WaitUntil(() => mazeRenderer.ai.GetComponent<AIController>().pathCalculated); //Wait until path is calculated
+            
+            pathLength = (int)mazeRenderer.ai.GetComponent<AIController>().pathLength; //Get path length
         }
 
         //UI
@@ -37,15 +52,10 @@ public class GameMenager : MonoBehaviour
         uiController.StartLevel();
 
         //Camera controller
+        camController.EnableGameplayCamera(); //Enable gameplay camera settings
 
 
-
-        //change camera view size to fit entire maze inside
-        camController.cam.orthographicSize = mazeRenderer.mazeSize + 2.0f;
-        //This fixes centering by offseting camera X and Y axis by difference between maze outer walls position
-        camController.cam.transform.position = new Vector3((mazeRenderer.lookAtXOffsetLeft + mazeRenderer.lookAtXOffsetRight) * 0.5f, mazeRenderer.mazeSize % 2 == 0 ? (mazeRenderer.lookAtYOffsetTop + mazeRenderer.lookAtYOffsetBottom) * 0.5f : (mazeRenderer.lookAtYOffsetTop + mazeRenderer.lookAtYOffsetBottom) * 0.5f - 0.5f, camController.cam.transform.position.z);
-
-
+        //TODO DISABLE LOADING SCREEN
 
 
         //Start counting the time
@@ -124,16 +134,7 @@ public class GameMenager : MonoBehaviour
         }
 
         //Camera Controller
-
-
-
-        //main menu background maze, 12 is best for menu
-        camController.cam.orthographicSize = 12;
-  
-        
-
-
-
+        camController.EnableMenuCamera(); //Set Camera to menu settings
     }
 
     //Calculate Time

@@ -255,13 +255,6 @@ public class MazeRenderer : MonoBehaviour
             }
         }
 
-        //TODO Change this to Coroutine and put into GenerateMazeForGameplay
-        //Whole maze is drawn
-        if (normalMode == false)
-        {
-            Invoke(nameof(RecalculateAIPathfinding), .25f); //Calculate path to finish when whole maze is drawn
-        }
-
         return true; //Done drawing
     }
 

@@ -32,8 +32,7 @@ public class PlayerController : MonoBehaviour
 
         if (hit.collider == null) //when player is free to move
 		{
-            transform.localPosition += new Vector3(dir.x * moveMultiplier, 0, -dir.y * moveMultiplier);
-            gameMenager.ChangeScore(gameMenager.score += 1);
+            MakeMove(dir);
         }
         else if(hit.collider.CompareTag("Finish")) //when player crosses the finish line
 		{
@@ -43,8 +42,7 @@ public class PlayerController : MonoBehaviour
         else if (hit.collider.CompareTag("Key")) //when player collected key
         {
             //Move into key position
-            transform.localPosition += new Vector3(dir.x * moveMultiplier, 0, -dir.y * moveMultiplier);
-            gameMenager.ChangeScore(gameMenager.score += 1);
+            MakeMove(dir);
 
             hasKey = true;
 
@@ -60,5 +58,14 @@ public class PlayerController : MonoBehaviour
 
             Debug.Log("Got key");
         }
+    }
+
+    private void MakeMove(Vector2 dir)
+	{
+        //TODO ENABLE MOVE ANIMATION
+
+
+        transform.localPosition += new Vector3(dir.x * moveMultiplier, 0, -dir.y * moveMultiplier); //Move
+        gameMenager.ChangeScore(gameMenager.score += 1); //Add score
     }
 }
