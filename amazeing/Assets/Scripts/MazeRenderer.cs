@@ -23,8 +23,6 @@ public class MazeRenderer : MonoBehaviour
     //Random maze generation seed
     public int mazeSeed = 1;
 
-    [HideInInspector] public int lvlCount = 99;
-
     //wall size multiplier, best at 1.0f
     [SerializeField] private float wallSize = 1.0f;
 
@@ -38,7 +36,6 @@ public class MazeRenderer : MonoBehaviour
     [SerializeField] private bool colorize = true;
 
     //Prefabs
-    [SerializeField] private Camera cam = null;
     [SerializeField] private Transform wallPrefab = null; 
     [SerializeField] private Transform finishPrefab = null; //Optional
     [HideInInspector] public Transform finish;
@@ -48,14 +45,13 @@ public class MazeRenderer : MonoBehaviour
     [HideInInspector] public Transform player;
     [SerializeField] private Transform aiPrefab = null; //Optional
     [HideInInspector] public Transform ai;
-    [SerializeField] private TextMeshProUGUI lvlLabel = null; //Optional
-    
+
 
     //Offsets values of maze borders for calculating camera offset, allows centering of maze
-    private float lookAtXOffsetLeft = 0;
-    private float lookAtXOffsetRight = 0;
-    private float lookAtYOffsetTop = 0;
-    private float lookAtYOffsetBottom = 0;
+    [HideInInspector] public float lookAtXOffsetLeft = 0;
+    [HideInInspector] public float lookAtXOffsetRight = 0;
+    [HideInInspector] public float lookAtYOffsetTop = 0;
+    [HideInInspector] public float lookAtYOffsetBottom = 0;
 
     //Key placement
     private float x = 0;
@@ -65,10 +61,6 @@ public class MazeRenderer : MonoBehaviour
     private int z2 = 0;
 
     [SerializeField] private Color enabledFinishColor;
-
-    //Game Timer
-    [HideInInspector] public float gameTime = 0.0f;
-    private IEnumerator gameTimer;
 
     void Start()
     {
@@ -87,7 +79,7 @@ public class MazeRenderer : MonoBehaviour
         }
     }
 
-    private void Draw(WallState[,] maze)
+    private bool Draw(WallState[,] maze)
     {
         /*Maze Drawing i - width, j - height
         * i=0 - left
@@ -131,7 +123,7 @@ public class MazeRenderer : MonoBehaviour
                     finish.localEulerAngles = new Vector3(90, 90, 0);
 
                     //Disable finish 
-                    finish.CompareTag("Wall"); //Disable until player collects key
+                    finish.tag = "Wall"; //Disable until player collects key
                     finish.GetComponent<ColorRandomizer>().RandomizeColor(mazeSeed);//Hide finish
                 }
                 else
@@ -262,11 +254,13 @@ public class MazeRenderer : MonoBehaviour
         //Whole maze is drawn
         if (normalMode == false)
         {
-            Invoke("RecalculateAIPathfinding", .25f); //Calculate path to finish when whole maze is drawn
+            Invoke(nameof(RecalculateAIPathfinding), .25f); //Calculate path to finish when whole maze is drawn
         }
+
+        return true; //Done drawing
     }
 
-    public void StartGame(int lvlNumber, int lvlAmount, bool normal)
+    public bool GenerateMazeForGameplay(int lvlNumber, int lvlAmount, bool normal)
 	{
         if(sizeBasedOnSizeCurve && UseMazeSize)
 		{
@@ -285,85 +279,30 @@ public class MazeRenderer : MonoBehaviour
 
         normalMode = normal; //normal/hard game mode
         mazeSeed = lvlNumber; //use lvlNumer as maze seed
-        lvlCount = lvlAmount;
-
-        if(lvlLabel != null)
-		{
-            lvlLabel.gameObject.SetActive(true);
-            lvlLabel.SetText(lvlNumber.ToString()); //Display lvl number
-        }
 
         var maze = MazeGenerator.Generate(mazeWidth, mazeHeight, mazeSeed); //Generate maze
 
-        Draw(maze); //Draw maze
-        
-        //change camera view size to fit entire maze inside
-        cam.orthographicSize = mazeSize + 2.0f;
-
-        //This fixes centering by offseting camera X and Y axis by difference between maze outer walls position
-        cam.transform.position = new Vector3((lookAtXOffsetLeft + lookAtXOffsetRight) * 0.5f, mazeSize % 2 == 0 ? (lookAtYOffsetTop + lookAtYOffsetBottom) * 0.5f : (lookAtYOffsetTop + lookAtYOffsetBottom) * 0.5f - 0.5f, cam.transform.position.z);
-
-        //Start counting the time
-        gameTimer = GameTimer();
-        StartCoroutine(gameTimer);
-    }
-
-    public void PauseGame()
-	{
-        StopCoroutine(gameTimer);
-	}
-    public void ResumeeGame()
-    {
-        gameTimer = GameTimer();
-        StartCoroutine(gameTimer);
-    }
-
-    public void StopGame()
-	{
-        //Stop game timer
-        StopCoroutine(gameTimer);
-    }
-
-    private IEnumerator GameTimer()
-	{
-        while(true)
-		{
-            gameTime += Time.unscaledDeltaTime;
-            yield return null;
-        }
+        return Draw(maze); //Draw maze
     }
 
     public void UnlockFinish()
 	{
-        finish.CompareTag("Finish"); //Enable finish
+        finish.tag = "Finish"; //Enable finish
 
         finish.GetComponent<SpriteRenderer>().color = enabledFinishColor; //Change color to enabled
-    }
-
-    public void ClearGame()
-    {
-        StopGame();
-
-        //Clear maze
-        for (int i=0; i < transform.childCount; i++)
-		{
-            Destroy(transform.GetChild(i).gameObject);
-		}
-
-        //Reset game timer
-        gameTime = 0.0f;
-
-        //main menu background maze, 12 is best for menu
-        cam.orthographicSize = 12;
-
-        if (lvlLabel != null)
-        {
-            lvlLabel.gameObject.SetActive(false);
-        }
     }
 
     public void RecalculateAIPathfinding()
 	{
         StartCoroutine(ai.GetComponent<AIController>().CalculatePathLength()); //Start ai path calculation
+    }
+
+    public void ClearMaze()
+    {
+        //Clear maze
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            Destroy(transform.GetChild(i).gameObject);
+        }
     }
 }

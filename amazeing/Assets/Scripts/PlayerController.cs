@@ -11,15 +11,9 @@ public class PlayerController : MonoBehaviour
 
     public bool hasKey = false;
 
-    //UI
     private UIController ui;
-    private TextMeshProUGUI scoreValueTMPro;
-    private TextMeshProUGUI endgamescoreValueTMPro;
-    private TextMeshProUGUI pausescoreValueTMPro;
-
     private MazeRenderer mazeRenderer;
-
-    [HideInInspector] public int score = 0;
+    private GameMenager gameMenager;
 
 	private void Start()
 	{
@@ -29,10 +23,7 @@ public class PlayerController : MonoBehaviour
 
         mazeRenderer = GetComponentInParent<MazeRenderer>();
 
-        //Get UI score tmpro
-        scoreValueTMPro = ui.scoreValue.GetComponent<TextMeshProUGUI>();
-        endgamescoreValueTMPro = ui.endgameScoreValue.GetComponent<TextMeshProUGUI>();
-        pausescoreValueTMPro = ui.pauseScoreValue.GetComponent<TextMeshProUGUI>();
+        gameMenager = ui.gameMenager;
     }
 
     public void MovePlayer(Vector2 dir)
@@ -42,18 +33,18 @@ public class PlayerController : MonoBehaviour
         if (hit.collider == null) //when player is free to move
 		{
             transform.localPosition += new Vector3(dir.x * moveMultiplier, 0, -dir.y * moveMultiplier);
-            ChangeScoreBy(1);
+            gameMenager.ChangeScore(gameMenager.score += 1);
         }
         else if(hit.collider.CompareTag("Finish")) //when player crosses the finish line
 		{
-            ui.EndGameAction();
+            gameMenager.StopGame();
             Debug.Log("Win");
 		}
         else if (hit.collider.CompareTag("Key")) //when player collected key
         {
             //Move into key position
             transform.localPosition += new Vector3(dir.x * moveMultiplier, 0, -dir.y * moveMultiplier);
-            ChangeScoreBy(1);
+            gameMenager.ChangeScore(gameMenager.score += 1);
 
             hasKey = true;
 
@@ -69,16 +60,5 @@ public class PlayerController : MonoBehaviour
 
             Debug.Log("Got key");
         }
-    }
-
-    private void ChangeScoreBy(int x)
-	{
-        //Change score
-        score += x; 
-
-        //Change Ui
-        scoreValueTMPro.SetText(score.ToString()); 
-        endgamescoreValueTMPro.SetText(score.ToString());
-        pausescoreValueTMPro.SetText(score.ToString());
     }
 }

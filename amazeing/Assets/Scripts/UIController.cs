@@ -8,7 +8,8 @@ using TMPro;
 public class UIController : MonoBehaviour
 {
 	private PlayerController player;
-	[SerializeField] private GameObject gameplayMazeRenderer;
+	[SerializeField] private MazeRenderer gameplayMazeRenderer;
+	public GameMenager gameMenager;
 
 	//Panels
 	[SerializeField] private GameObject gameplayPanel;
@@ -22,11 +23,14 @@ public class UIController : MonoBehaviour
 	public GameObject keyIconEnabled;
 	public GameObject keyIconDisabled;
 
-	public GameObject scoreValue;
-	public GameObject endgameScoreValue;
-	public GameObject pauseScoreValue;
-	public GameObject endgameTimeValue;
-	public GameObject pauseTimeValue;
+	public TextMeshProUGUI scoreValue;
+	public TextMeshProUGUI endgameScoreValue;
+	public TextMeshProUGUI pauseScoreValue;
+
+	public TextMeshProUGUI endgameTimeValue;
+	public TextMeshProUGUI pauseTimeValue;
+
+	public TextMeshProUGUI lvlLabel;
 
 	//menu
 	[SerializeField] private GameObject mainPanel;
@@ -81,72 +85,49 @@ public class UIController : MonoBehaviour
 	//Level handling
 	public void EndGameAction()
 	{
-		gameplayMazeRenderer.GetComponent<MazeRenderer>().StopGame();
-
-		UpdateTimeValues();
-
 		EnablePanel(endgamePanel);
 		DisablePanel(gameplayoverlayPanel);
 	}
 
-	public void StartLevel(int lvlNumber, int levelAmount, bool normal)
+	public void StartLevel()
 	{
-		gameplayMazeRenderer.GetComponent<MazeRenderer>().StartGame(lvlNumber, levelAmount, normal);
-
 		EnablePanel(gameplayPanel);
 		EnablePanel(gameplayoverlayPanel);
 		DisablePanel(menuPanel);
 		DisablePanel(mainPanel);
 	}
 
-	public void StartNextLevel()
-	{
-		int lvl = gameplayMazeRenderer.GetComponent<MazeRenderer>().mazeSeed;
-		int lvlCount = gameplayMazeRenderer.GetComponent<MazeRenderer>().lvlCount;
-		bool normal = gameplayMazeRenderer.GetComponent<MazeRenderer>().normalMode;
-
-		ClearLevel();
-
-		StartLevel(lvl+1, lvlCount, normal);
-	}
-
-	public void RestartLevel()
-	{
-		int lvl = gameplayMazeRenderer.GetComponent<MazeRenderer>().mazeSeed;
-		int lvlCount = gameplayMazeRenderer.GetComponent<MazeRenderer>().lvlCount;
-		bool normal = gameplayMazeRenderer.GetComponent<MazeRenderer>().normalMode;
-
-		ClearLevel();
-
-		StartLevel(lvl, lvlCount, normal);
-	}
-
 	public void ClearLevel()
 	{
-		gameplayMazeRenderer.GetComponent<MazeRenderer>().ClearGame();
-
 		EnablePanel(keyIconDisabled);
 		DisablePanel(keyIconEnabled);
 
 		//Clear score counters
-		scoreValue.GetComponent<TextMeshProUGUI>().SetText("0");
-		endgameScoreValue.GetComponent<TextMeshProUGUI>().SetText("0");
+		UpdateScoreValues(0);
 
 		//Clear time counters
-		pauseTimeValue.GetComponent<TextMeshProUGUI>().SetText("0");
-		endgameTimeValue.GetComponent<TextMeshProUGUI>().SetText("0");
+		UpdateTimeValues(0);
 	}
 
-	public void UpdateTimeValues()
+	public void UpdateTimeValues(float time)
 	{
-		//Get Time
-		float time = gameplayMazeRenderer.GetComponent<MazeRenderer>().gameTime;
-
 		//Round to 2 decimap places
 		time = (Mathf.Round(time * 100)) / 100.0f;
 
 		//Update value text
-		pauseTimeValue.GetComponent<TextMeshProUGUI>().SetText(time.ToString() + " sec");
-		endgameTimeValue.GetComponent<TextMeshProUGUI>().SetText(time.ToString() + " sec");
+		pauseTimeValue.SetText(time.ToString() + " sec");
+		endgameTimeValue.SetText(time.ToString() + " sec");
+	}
+
+	public void UpdateScoreValues(float score)
+	{
+		scoreValue.SetText(score.ToString());
+		endgameScoreValue.SetText(score.ToString());
+		pauseScoreValue.SetText(score.ToString());
+	}
+
+	public void UpdateLVLCounter(int lvlNumber)
+	{
+		lvlLabel.SetText(lvlNumber.ToString());
 	}
 }

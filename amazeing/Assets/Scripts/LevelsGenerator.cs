@@ -10,8 +10,6 @@ public class LevelsGenerator : MonoBehaviour
 
     [SerializeField] private GameObject buttonPrefab;
 
-    [SerializeField] private int levelAmount = 12; //Total lvl amount to generate
-
     [SerializeField] private int columnAmount = 4;
 
     [SerializeField] private int spaceBetweenButtons = 250;
@@ -22,6 +20,7 @@ public class LevelsGenerator : MonoBehaviour
 
     [SerializeField] private bool normalMode = true; //generate buttons that start lvl in hard or normal mode
 
+    [SerializeField] private GameMenager gameMenager;
     [SerializeField] private UIController ui;
 
     /*Default Settings:
@@ -33,7 +32,7 @@ public class LevelsGenerator : MonoBehaviour
     {
         //set scrollview height to fit all buttons inside
         RectTransform rect = gameObject.GetComponent<RectTransform>();
-        int height = baseYOffset + ((levelAmount / columnAmount) + 1) * spaceBetweenButtons;
+        int height = baseYOffset + ((gameMenager.lvlCount / columnAmount) + 1) * spaceBetweenButtons;
         rect.sizeDelta = new Vector2(rect.sizeDelta.x, height);
 
         GenerateLevels();
@@ -41,13 +40,13 @@ public class LevelsGenerator : MonoBehaviour
 
     private void GenerateLevels()
 	{
-        for(int i=0; i<(levelAmount/columnAmount) + 1; i++)
+        for(int i=0; i<(gameMenager.lvlCount / columnAmount) + 1; i++)
 		{
             for(int j=0; j<columnAmount; j++)
 			{
                 int lvlIndex = (i * columnAmount) + j + 1;
 
-                if (lvlIndex <= levelAmount)
+                if (lvlIndex <= gameMenager.lvlCount)
                 {
                     int posX = columnAmount % 2 == 0 ? (spaceBetweenButtons / 2) + spaceBetweenButtons * (columnAmount / 2) * -1 + (spaceBetweenButtons * j) : (buttonWidth / 2) + spaceBetweenButtons * (columnAmount / 2) * -1 + (spaceBetweenButtons * j);
 
@@ -71,6 +70,6 @@ public class LevelsGenerator : MonoBehaviour
 
         text.SetText(lvlNumber.ToString());
 
-        button.onClick.AddListener(() => ui.StartLevel(lvlNumber, levelAmount, normalMode));
+        button.onClick.AddListener(() => gameMenager.StartGame(lvlNumber, normalMode));
     }
 }
