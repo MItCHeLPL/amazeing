@@ -13,19 +13,22 @@ public class GameMenager : MonoBehaviour
     public int score = 0; //Player score
 
     public float gameTime = 0.0f; //Game Timer
-    private IEnumerator gameTimer;
+    private IEnumerator gameTimer; //Game Timer Coroutine
 
-    public float pathLength = 0;
+    public int pathLength = 0; //Total path to finish through key position
 
-    public void StartGame(int lvlNumber, bool normal) //Convert to IEnumerator
+    public void StartGame(int lvlNumber, bool normal) //TODO Convert to IEnumerator
 	{
         bool maze = mazeRenderer.GenerateMazeForGameplay(lvlNumber, lvlCount, normal);
 
+        //if race mode
         if(normal == false)
 		{
-            pathLength = Mathf.Floor(mazeRenderer.ai.GetComponent<AIController>().pathLength);
+            //Get path length
+            pathLength = (int)mazeRenderer.ai.GetComponent<AIController>().pathLength;
         }
 
+        //UI
         if (uiController.lvlLabel != null)
         {
             uiController.EnablePanel(uiController.lvlLabel.gameObject);
@@ -33,9 +36,9 @@ public class GameMenager : MonoBehaviour
         }
         uiController.StartLevel();
 
+        //Camera controller
 
 
-        //ADD CAMERA CONTROLER
 
         //change camera view size to fit entire maze inside
         camController.cam.orthographicSize = mazeRenderer.mazeSize + 2.0f;
@@ -50,6 +53,7 @@ public class GameMenager : MonoBehaviour
         StartCoroutine(gameTimer);
     }
 
+    //Reset level and start next
     public void StartNextLevel()
     {
         int lvl = mazeRenderer.mazeSeed;
@@ -60,6 +64,7 @@ public class GameMenager : MonoBehaviour
         StartGame(lvl+1, normal);
     }
 
+    //Reset level
     public void RestartGame()
     {
         int lvl = mazeRenderer.mazeSeed;
@@ -70,69 +75,84 @@ public class GameMenager : MonoBehaviour
         StartGame(lvl, normal);
     }
 
+    //Pause
     public void PauseGame()
 	{
         StopCoroutine(gameTimer);
 
+        //UI
         uiController.UpdateTimeValues(gameTime);
     }
 
+    //Resume
     public void ResumeGame()
 	{
+        //Resume Timer
         gameTimer = GameTimer();
         StartCoroutine(gameTimer);
     }
 
+    //Endgame
     public void StopGame()
 	{
         //Stop game timer
         StopCoroutine(gameTimer);
 
+        //UI
         uiController.EndGameAction();
-
         uiController.UpdateTimeValues(gameTime);
     }
 
+    //Clear
     public void ClearGame()
 	{
         //Reset game timer
         gameTime = 0.0f;
 
+        //Reset score
         ChangeScore(0);
 
+        //Reset path length
+        pathLength = 0;
+
+        //UI
         mazeRenderer.ClearMaze();
         uiController.ClearLevel();
-
-
-        //ADD CAMERA CONTROLER
-
-        //main menu background maze, 12 is best for menu
-        camController.cam.orthographicSize = 12;
-
-
-
-
         if (uiController.lvlLabel != null)
         {
             uiController.DisablePanel(uiController.lvlLabel.gameObject);
         }
+
+        //Camera Controller
+
+
+
+        //main menu background maze, 12 is best for menu
+        camController.cam.orthographicSize = 12;
+  
+        
+
+
+
     }
 
+    //Calculate Time
     private IEnumerator GameTimer()
     {
         while (true)
         {
-            gameTime += Time.unscaledDeltaTime;
-            yield return null;
+            gameTime += Time.unscaledDeltaTime; //Calculate realtime
+            yield return new WaitForEndOfFrame();
         }
     }
 
+    //Moves
     public void ChangeScore(int x)
     {
         //Change score
         score = x;
 
-        //Change Ui
+        //Ui
         uiController.UpdateScoreValues(score);
     }
 }

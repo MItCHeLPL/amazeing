@@ -20,6 +20,7 @@ public class LevelsGenerator : MonoBehaviour
 
     [SerializeField] private bool normalMode = true; //generate buttons that start lvl in hard or normal mode
 
+
     [SerializeField] private GameMenager gameMenager;
     [SerializeField] private UIController ui;
 
@@ -32,7 +33,7 @@ public class LevelsGenerator : MonoBehaviour
     {
         //set scrollview height to fit all buttons inside
         RectTransform rect = gameObject.GetComponent<RectTransform>();
-        int height = baseYOffset + ((gameMenager.lvlCount / columnAmount) + 1) * spaceBetweenButtons;
+        int height = baseYOffset + (gameMenager.lvlCount / columnAmount) * spaceBetweenButtons;
         rect.sizeDelta = new Vector2(rect.sizeDelta.x, height);
 
         GenerateLevels();
@@ -40,8 +41,10 @@ public class LevelsGenerator : MonoBehaviour
 
     private void GenerateLevels()
 	{
+        //Y
         for(int i=0; i<(gameMenager.lvlCount / columnAmount) + 1; i++)
 		{
+            //X
             for(int j=0; j<columnAmount; j++)
 			{
                 int lvlIndex = (i * columnAmount) + j + 1;
@@ -70,6 +73,7 @@ public class LevelsGenerator : MonoBehaviour
 
         text.SetText(lvlNumber.ToString());
 
+        //Add onclick to start game at each button
         button.onClick.AddListener(() => gameMenager.StartGame(lvlNumber, normalMode));
     }
 }

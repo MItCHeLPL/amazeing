@@ -26,26 +26,29 @@ public class MazeRenderer : MonoBehaviour
     //wall size multiplier, best at 1.0f
     [SerializeField] private float wallSize = 1.0f;
 
-    //start game in normal/hard mode
+    //generate maze with ai when normalmode is false
     public bool normalMode = true;
 
     //draw maze on game start rather than on call
     [SerializeField] private bool drawOnStart = false;
 
-    //Colorize maze walls
+    //Colorize maze walls to random color
     [SerializeField] private bool colorize = true;
 
-    //Prefabs
+    //Prefabs and instances
     [SerializeField] private Transform wallPrefab = null; 
+
     [SerializeField] private Transform finishPrefab = null; //Optional
     [HideInInspector] public Transform finish;
+
     [SerializeField] private Transform keyPrefab = null; //Optional
     [HideInInspector] public Transform key;
+
     [SerializeField] private Transform playerPrefab = null; //Optional
     [HideInInspector] public Transform player;
+
     [SerializeField] private Transform aiPrefab = null; //Optional
     [HideInInspector] public Transform ai;
-
 
     //Offsets values of maze borders for calculating camera offset, allows centering of maze
     [HideInInspector] public float lookAtXOffsetLeft = 0;
@@ -53,14 +56,14 @@ public class MazeRenderer : MonoBehaviour
     [HideInInspector] public float lookAtYOffsetTop = 0;
     [HideInInspector] public float lookAtYOffsetBottom = 0;
 
-    //Key placement
+    //Key placement calculation
     private float x = 0;
     private int y1 = 0;
     private int y2 = 0;
     private int z1 = 0;
     private int z2 = 0;
 
-    [SerializeField] private Color enabledFinishColor;
+    [SerializeField] private Color enabledFinishColor; //Color for enabled finish line
 
     void Start()
     {
@@ -87,9 +90,9 @@ public class MazeRenderer : MonoBehaviour
         * j=0 - top
         * j=mazeHeight - bottom*/
 
-        if(keyPrefab != null)
+        //Randomize position for key placement
+        if (keyPrefab != null)
 		{
-            //Randomize position for key placement
             Random.InitState(mazeSeed); //always same position per level
             x = Random.Range(0.0f, 1.0f);
             y1 = (int)Mathf.Round(Random.Range(0, Mathf.Round(mazeWidth / 2)));
@@ -103,7 +106,7 @@ public class MazeRenderer : MonoBehaviour
             Random.InitState(mazeSeed*3);
             z2 = (int)Mathf.Round(Random.Range(Mathf.Round(mazeWidth / 2), mazeWidth - 1));
 
-            Random.InitState(mazeSeed);
+            Random.InitState(mazeSeed); //Go back to normal seed for other randomizations
         }
 
         for (int i = 0; i < mazeWidth; ++i)
@@ -123,8 +126,8 @@ public class MazeRenderer : MonoBehaviour
                     finish.localEulerAngles = new Vector3(90, 90, 0);
 
                     //Disable finish 
-                    finish.tag = "Wall"; //Disable until player collects key
-                    finish.GetComponent<ColorRandomizer>().RandomizeColor(mazeSeed);//Hide finish
+                    finish.tag = "Wall"; //Disable until player collects key by making finish line detectable as wall
+                    finish.GetComponent<ColorRandomizer>().RandomizeColor(mazeSeed);//Hide finish line by coloring it to same color as walls
                 }
                 else
                 {
@@ -136,6 +139,7 @@ public class MazeRenderer : MonoBehaviour
                         player.localPosition = position + new Vector3(0, 0, 0);
                         player.localEulerAngles = new Vector3(90, 0, 0);
 
+                        //Create AI When in Race Mode
                         if(normalMode == false)
 						{
                             ai = Instantiate(aiPrefab, transform) as Transform;
@@ -251,6 +255,7 @@ public class MazeRenderer : MonoBehaviour
             }
         }
 
+        //TODO Change this to Coroutine and put into GenerateMazeForGameplay
         //Whole maze is drawn
         if (normalMode == false)
         {
@@ -262,15 +267,17 @@ public class MazeRenderer : MonoBehaviour
 
     public bool GenerateMazeForGameplay(int lvlNumber, int lvlAmount, bool normal)
 	{
+        //Calculate squared maze size based on size curve instead of static value
         if(sizeBasedOnSizeCurve && UseMazeSize)
 		{
-            //linear = newMin + (val - minVal) * (newMax - newMin) / (maxVal - minVal);
-            //mazeSize = minMazeSize + (lvlNumber - 1) * (maxMazeSize - minMazeSize) / (lvlAmount - 1); //linear scale
+            //linear = newMin + (val - minVal) * (newMax - newMin) / (maxVal - minVal); //Formula
+            //mazeSize = minMazeSize + (lvlNumber - 1) * (maxMazeSize - minMazeSize) / (lvlAmount - 1); //linear scale (without curve)
             mazeSize = (int)(minMazeSize + (sizeCurve.Evaluate((float)lvlNumber / (float)lvlAmount) - 0) * (maxMazeSize - minMazeSize) / (1 - 0)); //curve evaluation of maze scale
 
-            Debug.Log("Level Number: " + lvlNumber + ", Maze size: " + mazeSize + ", Curve value: " + sizeCurve.Evaluate((float)lvlNumber / (float)lvlAmount)); //Debug
+            //Debug.Log("Level Number: " + lvlNumber + ", Maze size: " + mazeSize + ", Curve value: " + sizeCurve.Evaluate((float)lvlNumber / (float)lvlAmount)); //Debug after maze generation
         }
 
+        //When maze is meant to be square
         if(UseMazeSize)
 		{
             mazeWidth = mazeSize;
@@ -282,21 +289,24 @@ public class MazeRenderer : MonoBehaviour
 
         var maze = MazeGenerator.Generate(mazeWidth, mazeHeight, mazeSeed); //Generate maze
 
-        return Draw(maze); //Draw maze
+        return Draw(maze); //Draw maze and return true when maze is fully rendered
     }
 
+    //Unlock Finish line
     public void UnlockFinish()
 	{
-        finish.tag = "Finish"; //Enable finish
+        finish.tag = "Finish"; //Enable finish by changing it's tag to interactable by player
 
-        finish.GetComponent<SpriteRenderer>().color = enabledFinishColor; //Change color to enabled
+        finish.GetComponent<SpriteRenderer>().color = enabledFinishColor; //Change color to enabled finish line color
     }
 
+    //Invoked call for ai to calculate Path
     public void RecalculateAIPathfinding()
 	{
         StartCoroutine(ai.GetComponent<AIController>().CalculatePathLength()); //Start ai path calculation
     }
 
+    //Delete maze
     public void ClearMaze()
     {
         //Clear maze

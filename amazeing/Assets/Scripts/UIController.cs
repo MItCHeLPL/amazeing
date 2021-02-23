@@ -7,6 +7,7 @@ using TMPro;
 
 public class UIController : MonoBehaviour
 {
+	//Get Scripts
 	private PlayerController player;
 	[SerializeField] private MazeRenderer gameplayMazeRenderer;
 	public GameMenager gameMenager;
@@ -15,29 +16,33 @@ public class UIController : MonoBehaviour
 	[SerializeField] private GameObject gameplayPanel;
 	[SerializeField] private GameObject menuPanel;
 
-	//gameplay
+	//Gameplay
 	[SerializeField] private GameObject gameplayoverlayPanel;
 	[SerializeField] private GameObject pausePanel;
 	[SerializeField] private GameObject endgamePanel;
 
+	//Key
 	public GameObject keyIconEnabled;
 	public GameObject keyIconDisabled;
 
+	//Score
 	public TextMeshProUGUI scoreValue;
 	public TextMeshProUGUI endgameScoreValue;
 	public TextMeshProUGUI pauseScoreValue;
 
+	//Time
 	public TextMeshProUGUI endgameTimeValue;
 	public TextMeshProUGUI pauseTimeValue;
 
+	//Lvl
 	public TextMeshProUGUI lvlLabel;
 
-	//menu
+	//Menu Panels
 	[SerializeField] private GameObject mainPanel;
 	[SerializeField] private GameObject playPanel;
 	[SerializeField] private GameObject aboutPanel;
 
-	//play
+	//Play Panels
 	[SerializeField] private GameObject normalPanel;
 	[SerializeField] private GameObject hardPanel;
 
@@ -60,7 +65,7 @@ public class UIController : MonoBehaviour
 	}
 
 
-	//Player control buttons
+	//Player navigation buttons
 	public void LeftAction()
 	{
 		player.MovePlayer(new Vector2(-1, 0));
@@ -82,7 +87,7 @@ public class UIController : MonoBehaviour
 	}
 
 
-	//Level handling
+	//UI Level handling
 	public void EndGameAction()
 	{
 		EnablePanel(endgamePanel);
@@ -97,6 +102,7 @@ public class UIController : MonoBehaviour
 		DisablePanel(mainPanel);
 	}
 
+	//Clear UI after lvl end
 	public void ClearLevel()
 	{
 		EnablePanel(keyIconDisabled);
@@ -109,6 +115,7 @@ public class UIController : MonoBehaviour
 		UpdateTimeValues(0);
 	}
 
+	//Refresh Time
 	public void UpdateTimeValues(float time)
 	{
 		//Round to 2 decimap places
@@ -119,6 +126,7 @@ public class UIController : MonoBehaviour
 		endgameTimeValue.SetText(time.ToString() + " sec");
 	}
 
+	//Refresh Score
 	public void UpdateScoreValues(float score)
 	{
 		scoreValue.SetText(score.ToString());
@@ -126,6 +134,7 @@ public class UIController : MonoBehaviour
 		pauseScoreValue.SetText(score.ToString());
 	}
 
+	//Refresh lvl label
 	public void UpdateLVLCounter(int lvlNumber)
 	{
 		lvlLabel.SetText(lvlNumber.ToString());
