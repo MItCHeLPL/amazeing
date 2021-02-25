@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   sodipodi:docname="bbschtext.svg"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 149.14862 38.834862"
+   height="38.834862mm"
+   width="149.14862mm"
+   inkscape:export-filename="E:\mikem\Pictures\Grafiki\BBSCH logo\BBSCH\bbschtext.png"
+   inkscape:export-xdpi="340.76083"
+   inkscape:export-ydpi="340.76083">
+  <defs
+     id="defs2">
+    <rect
+       id="rect852"
+       height="64.740591"
+       width="160.32936"
+       y="103.31973"
+       x="100.62964" />
+    <rect
+       x="81.438324"
+       y="94.774223"
+       width="164.71964"
+       height="63.710732"
+       id="rect842" />
+    <rect
+       id="rect835"
+       height="61.133911"
+       width="164.1282"
+       y="77.863098"
+       x="43.845238" />
+  </defs>
+  <sodipodi:namedview
+     inkscape:window-maximized="1"
+     inkscape:window-y="-8"
+     inkscape:window-x="1912"
+     inkscape:window-height="1377"
+     inkscape:window-width="2560"
+     showgrid="false"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="layer1"
+     inkscape:document-units="mm"
+     inkscape:cy="152.97676"
+     inkscape:cx="309.05874"
+     inkscape:zoom="1.3036965"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(-105.82239,-113.27972)"
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Warstwa 1">
+    <text
+       style="font-style:normal;font-weight:normal;font-size:52.9167px;line-height:1.25;font-family:sans-serif;letter-spacing:-2.64583px;white-space:pre;shape-inside:url(#rect852);fill:#000000;fill-opacity:1;stroke:none;"
+       id="text850"
+       xml:space="preserve"><tspan
+         x="100.62891"
+         y="151.59782"><tspan
+           style="fill:#007cc2;fill-opacity:1">B</tspan><tspan
+           style="fill:#daa520;fill-opacity:1">BSC</tspan><tspan
+           style="fill:#007cc2;fill-opacity:1">H</tspan></tspan></text>
+  </g>
+</svg>
