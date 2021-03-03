@@ -26,9 +26,6 @@ public class MazeRenderer : MonoBehaviour
     //wall size multiplier, best at 1.0f
     [SerializeField] private float wallSize = 1.0f;
 
-    //generate maze with ai when normalmode is false
-    public bool normalMode = true;
-
     //draw maze on game start rather than on call
     [SerializeField] private bool drawOnStart = false;
 
@@ -64,6 +61,8 @@ public class MazeRenderer : MonoBehaviour
     private int z2 = 0;
 
     [SerializeField] private Color enabledFinishColor; //Color for enabled finish line
+
+    [HideInInspector] public bool mazeDrawn = false;
 
     void Start()
     {
@@ -109,6 +108,10 @@ public class MazeRenderer : MonoBehaviour
             Random.InitState(mazeSeed); //Go back to normal seed for other randomizations
         }
 
+        //Organize walls under one gameobject
+        GameObject walls = new GameObject("Walls");
+        walls.transform.parent = this.transform;
+
         for (int i = 0; i < mazeWidth; ++i)
         {
             for (int j = 0; j < mazeHeight; ++j)
@@ -138,14 +141,11 @@ public class MazeRenderer : MonoBehaviour
                         player = Instantiate(playerPrefab, transform) as Transform;
                         player.localPosition = position + new Vector3(0, 0, 0);
                         player.localEulerAngles = new Vector3(90, 0, 0);
-
-                        //Create AI When in Race Mode
-                        if(normalMode == false)
-						{
-                            ai = Instantiate(aiPrefab, transform) as Transform;
-                            ai.localPosition = position + new Vector3(0, 0, 0);
-                            ai.localEulerAngles = new Vector3(90, 0, 0);
-                        }
+						
+                        //instantiate ai to calculate path
+                        ai = Instantiate(aiPrefab, transform) as Transform;
+                        ai.localPosition = position + new Vector3(0, 0, 0);
+                        ai.localEulerAngles = new Vector3(90, 0, 0);
                     }
 
                     //Instantiate key
@@ -168,7 +168,7 @@ public class MazeRenderer : MonoBehaviour
                     //Place walls
                     if (cell.HasFlag(WallState.UP))
                     {
-                        var topWall = Instantiate(wallPrefab, transform) as Transform;
+                        var topWall = Instantiate(wallPrefab, walls.transform) as Transform;
                         topWall.localPosition = position + new Vector3(0, 0, wallSize / 2);
                         topWall.localScale = new Vector3(topWall.localScale.x, wallSize, topWall.localScale.z);
                         topWall.localEulerAngles = new Vector3(90, 90, 0);
@@ -188,7 +188,7 @@ public class MazeRenderer : MonoBehaviour
 
                     if (cell.HasFlag(WallState.LEFT))
                     {
-                        var leftWall = Instantiate(wallPrefab, transform) as Transform;
+                        var leftWall = Instantiate(wallPrefab, walls.transform) as Transform;
                         leftWall.localPosition = position + new Vector3(-wallSize / 2, 0, 0);
                         leftWall.localScale = new Vector3(leftWall.localScale.x, wallSize, leftWall.localScale.z);
                         leftWall.localEulerAngles = new Vector3(90, 0, 0);
@@ -210,7 +210,7 @@ public class MazeRenderer : MonoBehaviour
                     {
                         if (cell.HasFlag(WallState.RIGHT))
                         {
-                            var rightWall = Instantiate(wallPrefab, transform) as Transform;
+                            var rightWall = Instantiate(wallPrefab, walls.transform) as Transform;
                             rightWall.localPosition = position + new Vector3(+wallSize / 2, 0, 0);
                             rightWall.localScale = new Vector3(rightWall.localScale.x, wallSize, rightWall.localScale.z);
                             rightWall.localEulerAngles = new Vector3(90, 0, 0);
@@ -233,7 +233,7 @@ public class MazeRenderer : MonoBehaviour
                     {
                         if (cell.HasFlag(WallState.DOWN))
                         {
-                            var bottomWall = Instantiate(wallPrefab, transform) as Transform;
+                            var bottomWall = Instantiate(wallPrefab, walls.transform) as Transform;
                             bottomWall.localPosition = position + new Vector3(0, 0, -wallSize / 2);
                             bottomWall.localScale = new Vector3(bottomWall.localScale.x, wallSize, bottomWall.localScale.z);
                             bottomWall.localEulerAngles = new Vector3(90, 90, 0);
@@ -255,10 +255,20 @@ public class MazeRenderer : MonoBehaviour
             }
         }
 
+        //rotate walls towards camera
+        walls.transform.localRotation = Quaternion.identity;
+
+        //public indicator
+        mazeDrawn = true;
+
+        //Calculate path after maze is fully drawn
+        AstarPath.active.Scan();
+        StartCoroutine(ai.GetComponent<AIController>().CalculatePathLength());
+
         return true; //Done drawing
     }
 
-    public bool GenerateMazeForGameplay(int lvlNumber, int lvlAmount, bool normal)
+    public bool GenerateMazeForGameplay(int lvlNumber, int lvlAmount)
 	{
         //Calculate squared maze size based on size curve instead of static value
         if(sizeBasedOnSizeCurve && UseMazeSize)
@@ -277,7 +287,6 @@ public class MazeRenderer : MonoBehaviour
             mazeHeight = mazeSize;
         }
 
-        normalMode = normal; //normal/hard game mode
         mazeSeed = lvlNumber; //use lvlNumer as maze seed
 
         var maze = MazeGenerator.Generate(mazeWidth, mazeHeight, mazeSeed); //Generate maze
@@ -293,12 +302,6 @@ public class MazeRenderer : MonoBehaviour
         finish.GetComponent<SpriteRenderer>().color = enabledFinishColor; //Change color to enabled finish line color
     }
 
-    //Invoked call for ai to calculate Path
-    public void RecalculateAIPathfinding()
-	{
-        StartCoroutine(ai.GetComponent<AIController>().CalculatePathLength()); //Start ai path calculation
-    }
-
     //Delete maze
     public void ClearMaze()
     {
@@ -307,5 +310,8 @@ public class MazeRenderer : MonoBehaviour
         {
             Destroy(transform.GetChild(i).gameObject);
         }
+
+        //change public indicator
+        mazeDrawn = false;
     }
 }

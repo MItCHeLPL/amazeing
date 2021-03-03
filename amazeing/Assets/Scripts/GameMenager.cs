@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameMenager : MonoBehaviour
 {
@@ -8,14 +9,18 @@ public class GameMenager : MonoBehaviour
 	public MazeRenderer mazeRenderer = null;
 	public CameraController camController = null;
 
-    public int lvlCount = 100; //Total lvl count
-    
-    public int score = 0; //Player score
+    [SerializeField] private Slider raceModeTimer = null; //Slider form race mode timer
 
+    public int lvlCount = 100; //Total lvl count
+    private bool normalGameMode = true; //Normal/Race mode
+
+    public int score = 0; //Player score
+    public int pathLength = 0; //Total path to finish through key position
+    
     public float gameTime = 0.0f; //Game Timer
     private IEnumerator gameTimer; //Game Timer Coroutine
 
-    public int pathLength = 0; //Total path to finish through key position
+    [SerializeField] private float raceModeTimeMultiplier = 0.66f; //Multiply time that player has to finish lvl in race mode
 
     //Start Level
     public void StartGame(int lvlNumber, bool normal)
@@ -29,18 +34,27 @@ public class GameMenager : MonoBehaviour
 
 
         bool maze = false;
-        maze = mazeRenderer.GenerateMazeForGameplay(lvlNumber, lvlCount, normal); //Generate maze
+        maze = mazeRenderer.GenerateMazeForGameplay(lvlNumber, lvlCount); //Generate maze
 
         yield return new WaitUntil(() => maze); //Wait until maze is fully generated
+
+        normalGameMode = normal;
+
+        var ai = mazeRenderer.ai.GetComponent<AIController>();
+
+        yield return new WaitUntil(() => ai.pathCalculated); //Wait until path is calculated
+
+        pathLength = (int)ai.pathLength; //Get path length
 
         //if race mode
         if (normal == false)
 		{
-            mazeRenderer.RecalculateAIPathfinding(); //Calculate Path
-
-            yield return new WaitUntil(() => mazeRenderer.ai.GetComponent<AIController>().pathCalculated); //Wait until path is calculated
-            
-            pathLength = (int)mazeRenderer.ai.GetComponent<AIController>().pathLength; //Get path length
+            raceModeTimer.gameObject.SetActive(true); //enable slider
+            raceModeTimer.maxValue = (raceModeTimeMultiplier * pathLength); //set max value to time that player has to finish race
+        }
+        else
+		{
+            raceModeTimer.gameObject.SetActive(false);
         }
 
         //UI
@@ -67,7 +81,7 @@ public class GameMenager : MonoBehaviour
     public void StartNextLevel()
     {
         int lvl = mazeRenderer.mazeSeed;
-        bool normal = mazeRenderer.normalMode;
+        bool normal = normalGameMode;
 
         ClearGame();
 
@@ -78,7 +92,7 @@ public class GameMenager : MonoBehaviour
     public void RestartGame()
     {
         int lvl = mazeRenderer.mazeSeed;
-        bool normal = mazeRenderer.normalMode;
+        bool normal = normalGameMode;
 
         ClearGame();
 
@@ -143,6 +157,19 @@ public class GameMenager : MonoBehaviour
         while (true)
         {
             gameTime += Time.unscaledDeltaTime; //Calculate realtime
+
+            //If race mode subtract game time from path length to calculate left time
+            if(normalGameMode == false)
+			{
+                raceModeTimer.value = (raceModeTimeMultiplier * pathLength) - gameTime; //full race time - current time
+
+                //when times runs out
+                if(raceModeTimer.value == raceModeTimer.minValue)
+				{
+                    StopGame();
+                }
+            }
+
             yield return new WaitForEndOfFrame();
         }
     }

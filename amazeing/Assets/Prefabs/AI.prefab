@@ -162,7 +162,7 @@ MonoBehaviour:
   radius: 0.5
   height: 2
   repathRate: 0.1
-  canSearch: 1
+  canSearch: 0
   canMove: 0
   maxSpeed: 1
   gravity: {x: 0, y: 0, z: 0}
@@ -208,8 +208,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 714ab2ea35e74bf4281eed55630c22dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pathPrefab: {fileID: 3920902015383458246, guid: 9a3ea3c394d10d44f94af1eef19b8069, type: 3}
   nodeSize: 0.5
   pathLength: 0
+  pathCalculated: 0
 --- !u!61 &6990842214134343293
 BoxCollider2D:
   m_ObjectHideFlags: 0

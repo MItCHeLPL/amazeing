@@ -21,10 +21,6 @@ public class UIController : MonoBehaviour
 	[SerializeField] private GameObject pausePanel;
 	[SerializeField] private GameObject endgamePanel;
 
-	//Key
-	public GameObject keyIconEnabled;
-	public GameObject keyIconDisabled;
-
 	//Score
 	public TextMeshProUGUI scoreValue;
 	public TextMeshProUGUI endgameScoreValue;
@@ -105,9 +101,6 @@ public class UIController : MonoBehaviour
 	//Clear UI after lvl end
 	public void ClearLevel()
 	{
-		EnablePanel(keyIconDisabled);
-		DisablePanel(keyIconEnabled);
-
 		//Clear score counters
 		UpdateScoreValues(0);
 
