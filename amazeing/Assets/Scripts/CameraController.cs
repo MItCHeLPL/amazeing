@@ -1,82 +1,142 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 
 public class CameraController : MonoBehaviour
 {
+    [Header("Objects")]
     [SerializeField] private MazeRenderer mazeRenderer;
+    private Camera cam;
 
-    public Camera cam; //temp until I get camera to work on cinemachine
+    private bool isInGameplay = false;
+    private bool isTouchStartInGameplayPanel = false;
 
-    public void EnableMenuCamera()
+    [Header("Menu")]
+    [SerializeField] private float camSizeInMenu = 12.0f;
+
+
+    [Header("Gameplay")]
+    [SerializeField] private float mazeMargin = 3.0f;
+
+    //Zoom
+    private Vector3 touchStart = Vector3.zero;
+    [SerializeField] private float zoomOutMin = 6.0f;
+    private float zoomOutMax = 12.0f;
+
+
+	private void Start()
 	{
-        //temp until I get camera to work on cinemachine
-        //main menu background maze, 12 is best for menu
-        cam.orthographicSize = 12;
+        cam = transform.GetComponent<Camera>();
+    }
+
+
+	public void EnableMenuCamera()
+	{
+        isInGameplay = false;
+
+        //main menu background maze, (12 is best for menu)
+        cam.orthographicSize = camSizeInMenu;
     }
 
     public void EnableGameplayCamera()
 	{
-        //temp until I get camera to work on cinemachine
-        //change camera view size to fit entire maze inside
-        cam.orthographicSize = mazeRenderer.mazeSize + 2.0f;
+        isInGameplay = true;
 
-        //This fixes centering by offseting camera X and Y axis by difference between maze outer walls position
-        cam.transform.position = new Vector3((mazeRenderer.lookAtXOffsetLeft + mazeRenderer.lookAtXOffsetRight) * 0.5f, mazeRenderer.mazeSize % 2 == 0 ? (mazeRenderer.lookAtYOffsetTop + mazeRenderer.lookAtYOffsetBottom) * 0.5f : (mazeRenderer.lookAtYOffsetTop + mazeRenderer.lookAtYOffsetBottom) * 0.5f - 0.5f, cam.transform.position.z);
+        //change camera view size to fit entire maze inside
+        cam.orthographicSize = mazeRenderer.mazeSize + mazeMargin;
+
+        zoomOutMax = mazeRenderer.mazeSize + mazeMargin;
+
+        //Center camera
+        cam.transform.position = new Vector3(
+            (mazeRenderer.lookAtXOffsetLeft + mazeRenderer.lookAtXOffsetRight) / 2, 
+            mazeRenderer.mazeSize % 2 == 0 ? (mazeRenderer.lookAtYOffsetTop + mazeRenderer.lookAtYOffsetBottom) / 2 : (mazeRenderer.lookAtYOffsetTop + mazeRenderer.lookAtYOffsetBottom) / 2 - 0.5f, 
+            cam.transform.position.z
+        );
     }
 
-    //TODO Implement:
 
-    //Author: https://twitter.com/astoldbywaldo/
-    //Fitment
-    /*public SpriteRenderer rink;
+	private void Update () 
+    {
+        if (isInGameplay)
+        {
+            //Based on: https://twitter.com/astoldbywaldo/
 
-	// Use this for initialization
-	void Start () {
-        float screenRatio = (float)Screen.width / (float)Screen.height;
-        float targetRatio = rink.bounds.size.x / rink.bounds.size.y;
+            //Screen Input
+            if (Input.GetMouseButtonDown(0))
+            {
+                touchStart = cam.ScreenToWorldPoint(Input.mousePosition);
 
-        if(screenRatio >= targetRatio){
-            Camera.main.orthographicSize = rink.bounds.size.y / 2;
-        }else{
-            float differenceInSize = targetRatio / screenRatio;
-            Camera.main.orthographicSize = rink.bounds.size.y / 2 * differenceInSize;
+                //If input in gameplay panel
+                PointerEventData pointerEventData = new PointerEventData(EventSystem.current);
+                pointerEventData.position = Input.mousePosition;
+
+                var raycastResults = new List<RaycastResult>();
+                EventSystem.current.RaycastAll(pointerEventData, raycastResults);
+
+                if (raycastResults.Count > 0)
+                {
+                    foreach (var result in raycastResults)
+                    {
+                        isTouchStartInGameplayPanel = result.gameObject.CompareTag("GameplayPanel");
+
+                        if (isTouchStartInGameplayPanel)
+						{
+                            break; 
+						}
+                    }
+                }
+            }
+        
+            //TODO check how zoom works on mobile and maybe add isTouchStartInGameplayPanel to if
+            //Touch input zoom
+            if (Input.touchCount == 2)
+            {
+                Touch touchZero = Input.GetTouch(0);
+                Touch touchOne = Input.GetTouch(1);
+
+                Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
+                Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+
+                float prevMagnitude = (touchZeroPrevPos - touchOnePrevPos).magnitude;
+                float currentMagnitude = (touchZero.position - touchOne.position).magnitude;
+
+                float difference = currentMagnitude - prevMagnitude;
+
+                ZoomCamera(difference * 0.01f);
+            }
+
+            //Moving camera
+            else if (Input.GetMouseButton(0) && isTouchStartInGameplayPanel)
+            {
+                Vector3 direction = touchStart - cam.ScreenToWorldPoint(Input.mousePosition);
+
+                Vector3 newPos = cam.transform.position + direction;
+
+                //Clamping to outer maze edges + margin
+                newPos = new Vector3(
+                    Mathf.Clamp(newPos.x, mazeRenderer.lookAtXOffsetLeft + mazeMargin, mazeRenderer.lookAtXOffsetRight - mazeMargin),
+                    Mathf.Clamp(newPos.y, mazeRenderer.lookAtYOffsetBottom + mazeMargin, mazeRenderer.lookAtYOffsetTop - mazeMargin),
+                    newPos.z
+                );
+
+                cam.transform.position = newPos;
+            }
+
+            //Mouse input zoom
+            if(Input.GetAxis("Mouse ScrollWheel") != 0.0f)
+		    {
+                ZoomCamera(Input.GetAxis("Mouse ScrollWheel") * 4.0f);
+            }
         }
-	}*/
+    }
+   
 
-    //Author: https://twitter.com/astoldbywaldo/
-    //Pinch Zoom
-    /*Vector3 touchStart;
-    public float zoomOutMin = 1;
-    public float zoomOutMax = 8;
-	
-	// Update is called once per frame
-	void Update () {
-        if(Input.GetMouseButtonDown(0)){
-            touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        }
-        if(Input.touchCount == 2){
-            Touch touchZero = Input.GetTouch(0);
-            Touch touchOne = Input.GetTouch(1);
-
-            Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
-            Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
-
-            float prevMagnitude = (touchZeroPrevPos - touchOnePrevPos).magnitude;
-            float currentMagnitude = (touchZero.position - touchOne.position).magnitude;
-
-            float difference = currentMagnitude - prevMagnitude;
-
-            zoom(difference * 0.01f);
-        }else if(Input.GetMouseButton(0)){
-            Vector3 direction = touchStart - Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Camera.main.transform.position += direction;
-        }
-        zoom(Input.GetAxis("Mouse ScrollWheel"));
-	}
-
-    void zoom(float increment){
-        Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize - increment, zoomOutMin, zoomOutMax);
-    }*/
+    private void ZoomCamera(float increment)
+    {
+        cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - increment, zoomOutMin, zoomOutMax);
+    }
 }
