@@ -14,7 +14,9 @@ public class PlayerController : MonoBehaviour
     private GameMenager gameMenager;
 
     [SerializeField] private Transform GFX; //player GFX
-    [SerializeField] private float animSpeed = 10.0f; //playter GFX animation speed
+    [SerializeField] private float animSpeed = 0.15f; //playter GFX animation speed
+
+    private float currentAngle = 0;
 
     //GFX coroutine
     private IEnumerator MoveAnimCoroutine;
@@ -67,23 +69,39 @@ public class PlayerController : MonoBehaviour
             moveAnimationPlaying = false;
         }
         //Start Coroutine
-        MoveAnimCoroutine = MoveAnimation(transform.position);
+        MoveAnimCoroutine = MoveAnimation(transform.position, dir);
         StartCoroutine(MoveAnimCoroutine);
     }
 
-    private IEnumerator MoveAnimation(Vector2 endPos)
+    private IEnumerator MoveAnimation(Vector2 endPos, Vector2 dir)
 	{
-        moveAnimationPlaying = true; //indicator
+        moveAnimationPlaying = true;
 
-        //smooth movement to end position until close to the position
-        while (Vector2.Distance(GFX.position, endPos) > 0.01f)
-		{
-            GFX.position = Vector2.Lerp(GFX.position, endPos, Time.deltaTime * animSpeed);
-            yield return new WaitForEndOfFrame();
+        float t = 0f;
+
+        Vector2 startPos = GFX.position;
+
+        //Angle towards direction with offset
+        float endAngle = (Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg) + 90.0f;
+
+        Vector2 newPos;
+        float newAngle;
+
+        while (t < 1)
+        {
+            t += Time.deltaTime / animSpeed;
+
+            newPos = Vector2.Lerp(startPos, endPos, t);
+            newAngle = Mathf.LerpAngle(currentAngle, endAngle, t);
+ 
+            GFX.position = newPos;
+            GFX.rotation = Quaternion.Euler(new Vector3(0, 0, newAngle));
+
+            yield return null;
         }
 
-        GFX.position = endPos; //snap to end position
+        currentAngle = endAngle;
 
-        moveAnimationPlaying = false; //indicator
+        moveAnimationPlaying = false;
     }
 }
