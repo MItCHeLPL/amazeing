@@ -7,17 +7,28 @@ public class AIController : MonoBehaviour
 {
     private MazeRenderer mazeRenderer;
 
-    [SerializeField] private GameObject pathPrefab = null;
-
+    [Header("AI")]
     [SerializeField] private float nodeSize = 0.5f; // A* grid graph node size
 
-    public float pathLength = 0; //Path from player spawn position to finish with checkpoint at key postion
+
+    [Header("Path")]
+    [SerializeField] private GameObject pathPrefab = null;
+
+    [HideInInspector] public float pathLength = 0; //Path from player spawn position to finish with checkpoint at key postion
+
+    [SerializeField] private float pathPointVisibilityTime = 1.0f;
+    [SerializeField] private float pathPointVisibilityOffset = 1.0f;
+    [SerializeField] private float pathPointMaxScale = 0.25f;
 
     [HideInInspector] public bool pathCalculated = false; //Indicator that AI finished calculating path
 
+
+    [Header("Objects")]
     private Seeker seeker;
     private AIPath aiPath;
     private AIDestinationSetter dest;
+    private GameObject path;
+
 
     private void Start()
 	{
@@ -33,7 +44,7 @@ public class AIController : MonoBehaviour
         mazeRenderer = GetComponentInParent<MazeRenderer>();
 
         //Organize path under one gameobject
-        GameObject path = new GameObject("Path");
+        path = new GameObject("Path");
         path.transform.parent = mazeRenderer.transform;
 
         //wait for maze to be fully drawn
@@ -57,10 +68,7 @@ public class AIController : MonoBehaviour
         pathLength += seeker.GetCurrentPath().vectorPath.Count * nodeSize; //Add to pathLength
 
         //Add path vectors as gameobjects as path transform children
-        foreach(Vector3 vector in seeker.GetCurrentPath().vectorPath)
-		{
-            Instantiate(pathPrefab, vector, Quaternion.identity, path.transform);
-		}
+        InstanitatePathPoint();
 
         transform.position = mazeRenderer.key.position; //Move AI to key position
         //Calculate path from key to finish
@@ -77,13 +85,66 @@ public class AIController : MonoBehaviour
         pathLength += seeker.GetCurrentPath().vectorPath.Count * nodeSize; //Add to pathLength
 
         //Add path vectors as gameobjects as path transform children
-        foreach (Vector3 vector in seeker.GetCurrentPath().vectorPath)
-        {
-            Instantiate(pathPrefab, vector, Quaternion.identity, path.transform);
-        }
+        InstanitatePathPoint();
 
-        path.SetActive(false); //TEMP Hide path
+        //path.SetActive(false); //TEMP Hide path
 
         pathCalculated = true; //Finished calculation
+    }
+
+    private void InstanitatePathPoint()
+	{
+        foreach (Vector3 vector in seeker.GetCurrentPath().vectorPath)
+        {
+            GameObject pathPoint = Instantiate(pathPrefab, vector, Quaternion.identity, path.transform);
+            pathPoint.transform.localScale = Vector3.zero;
+        }
+    }
+
+
+    public void ShowPath()
+	{
+        for(int i=0; i<path.transform.childCount; i++)
+		{
+            Transform pathPoint = path.transform.GetChild(i);
+            StartCoroutine(ShowPathPartCoroutine(pathPoint, ((i * pathPointVisibilityOffset) / pathLength)));
+        }
+    }
+    private IEnumerator ShowPathPartCoroutine(Transform pathPoint, float timeToWait)
+    {
+        float t = 0f;
+
+        float startScale = 0;
+        float endScale = pathPointMaxScale;
+
+        float newScale;
+
+        yield return new WaitForSeconds(timeToWait);
+
+        while (t < 1)
+        {
+            t += Time.deltaTime / (pathPointVisibilityTime / 2);
+
+            newScale = Mathf.Lerp(startScale, endScale, t);
+
+            pathPoint.localScale = new Vector3(newScale, newScale, newScale);
+
+            yield return null;
+        }
+
+        t = 0f;
+        startScale = pathPoint.localScale.x;
+        endScale = 0;
+
+        while (t < 1)
+        {
+            t += Time.deltaTime / (pathPointVisibilityTime / 2);
+
+            newScale = Mathf.Lerp(startScale, endScale, t);
+
+            pathPoint.localScale = new Vector3(newScale, newScale, newScale);
+
+            yield return null;
+        }
     }
 }

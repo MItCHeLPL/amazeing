@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform GFX; //player GFX
     [SerializeField] private float animSpeed = 0.15f; //playter GFX animation speed
 
-    private float currentAngle = 0;
+    private float currentAngle = 180;
 
     //GFX coroutine
     private IEnumerator MoveAnimCoroutine;

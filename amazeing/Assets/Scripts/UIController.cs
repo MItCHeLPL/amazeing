@@ -64,22 +64,22 @@ public class UIController : MonoBehaviour
 	//Player navigation buttons
 	public void LeftAction()
 	{
-		player.MovePlayer(new Vector2(-1, 0));
+		player.MovePlayer(Vector2.left);
 	}
 
 	public void UpAction()
 	{
-		player.MovePlayer(new Vector2(0, 1));
+		player.MovePlayer(Vector2.up);
 	}
 
 	public void DownAction()
 	{
-		player.MovePlayer(new Vector2(0, -1));
+		player.MovePlayer(Vector2.down);
 	}
 
 	public void RightAction()
 	{
-		player.MovePlayer(new Vector2(1, 0));
+		player.MovePlayer(Vector2.right);
 	}
 
 
@@ -97,6 +97,16 @@ public class UIController : MonoBehaviour
 		DisablePanel(menuPanel);
 		DisablePanel(mainPanel);
 	}
+
+	public void Help()
+	{
+		var ai = gameplayMazeRenderer.ai.GetComponent<AIController>();
+
+		//TODO add cost to using help
+
+		ai.ShowPath();
+	}
+	
 
 	//Clear UI after lvl end
 	public void ClearLevel()
