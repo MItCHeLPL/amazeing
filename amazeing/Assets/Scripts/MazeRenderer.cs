@@ -6,8 +6,8 @@ using TMPro;
 public class MazeRenderer : MonoBehaviour
 {
     //Maze size
-    [SerializeField] [Range(5, 50)] private int minMazeSize = 5;
-    [SerializeField] [Range(5, 50)] private int maxMazeSize = 25;
+    [Range(5, 50)] public int minMazeSize = 5;
+    [Range(5, 50)] public int maxMazeSize = 25;
 
     //Maze size is based on size curve rather than set maze size
     public bool sizeBasedOnSizeCurve = true;
@@ -273,11 +273,10 @@ public class MazeRenderer : MonoBehaviour
         //Calculate squared maze size based on size curve instead of static value
         if(sizeBasedOnSizeCurve && UseMazeSize)
 		{
-            //linear = newMin + (val - minVal) * (newMax - newMin) / (maxVal - minVal); //Formula
-            //mazeSize = minMazeSize + (lvlNumber - 1) * (maxMazeSize - minMazeSize) / (lvlAmount - 1); //linear scale (without curve)
-            mazeSize = (int)(minMazeSize + (sizeCurve.Evaluate((float)lvlNumber / (float)lvlAmount) - 0) * (maxMazeSize - minMazeSize) / (1 - 0)); //curve evaluation of maze scale
+            //mazeSize = ExtendedMathf.Map(lvlNumber, 1, lvlAmount, minMazeSize, maxMazeSize); //linear maze scale (without curve)
+            mazeSize = (int)ExtendedMathf.MapFrom01(sizeCurve.Evaluate((float)lvlNumber / (float)lvlAmount), minMazeSize, maxMazeSize); //curve evaluation of maze scale
 
-            //Debug.Log("Level Number: " + lvlNumber + ", Maze size: " + mazeSize + ", Curve value: " + sizeCurve.Evaluate((float)lvlNumber / (float)lvlAmount)); //Debug after maze generation
+            //Debug.Log("Level Number: " + lvlNumber + ", Maze size: " + mazeSize + ", Curve value: " + sizeCurve.Evaluate((float)lvlNumber / (float)lvlAmount)); //Debug
         }
 
         //When maze is meant to be square

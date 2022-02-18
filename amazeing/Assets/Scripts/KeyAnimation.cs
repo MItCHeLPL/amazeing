@@ -6,30 +6,48 @@ public class KeyAnimation : MonoBehaviour
 {
     private MazeRenderer mazeRenderer;
 
-	private void Start()
+    [SerializeField] private float animLength = 0.75f;
+
+    [SerializeField] private AnimationCurve speedCurve;
+
+    private void Start()
 	{
         mazeRenderer = GetComponentInParent<MazeRenderer>();
 	}
 
-	public void PlayAnimation(float speed)
+	public void PlayAnimation()
 	{
-        StartCoroutine(MoveAnimation(mazeRenderer.finish.position, speed));
+        StartCoroutine(MoveAnimation(mazeRenderer.finish.position));
 	}
 
-    private IEnumerator MoveAnimation(Vector2 endPos, float speed)
+    private IEnumerator MoveAnimation(Vector2 endPos)
     {
-        //smooth movement to end position until close to the position
-        while (Vector2.Distance(transform.position, endPos) > 0.01f)
+        //Move towards finish line
+        float t = 0f;
+
+        Vector2 startPos = transform.position;
+
+        Vector2 newPos;
+
+        while (t < 1)
         {
-            transform.position = Vector2.Lerp(transform.position, endPos, Time.deltaTime * speed);
-            yield return new WaitForEndOfFrame();
+            t += Time.deltaTime / animLength;
+
+            newPos = Vector2.Lerp(startPos, endPos, speedCurve.Evaluate(t));
+
+            transform.position = newPos;
+
+            yield return null;
         }
+
 
         //Play ending animation
 
-        mazeRenderer.UnlockFinish(); //Unlock mazes finish line
 
-        Autodestruction(); //Destroy after key got to finish later add this as animation event
+        mazeRenderer.UnlockFinish();
+
+
+        Autodestruction();
     }
 
     public void Autodestruction()

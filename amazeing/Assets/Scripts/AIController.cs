@@ -71,6 +71,7 @@ public class AIController : MonoBehaviour
         InstanitatePathPoint();
 
         transform.position = mazeRenderer.key.position; //Move AI to key position
+
         //Calculate path from key to finish
         dest.target = mazeRenderer.finish;
         aiPath.canSearch = true;
@@ -86,8 +87,6 @@ public class AIController : MonoBehaviour
 
         //Add path vectors as gameobjects as path transform children
         InstanitatePathPoint();
-
-        //path.SetActive(false); //TEMP Hide path
 
         pathCalculated = true; //Finished calculation
     }
@@ -119,8 +118,10 @@ public class AIController : MonoBehaviour
 
         float newScale;
 
+        //Wait before showing
         yield return new WaitForSeconds(timeToWait);
 
+        //PopIn
         while (t < 1)
         {
             t += Time.deltaTime / (pathPointVisibilityTime / 2);
@@ -136,6 +137,7 @@ public class AIController : MonoBehaviour
         startScale = pathPoint.localScale.x;
         endScale = 0;
 
+        //PopOut
         while (t < 1)
         {
             t += Time.deltaTime / (pathPointVisibilityTime / 2);

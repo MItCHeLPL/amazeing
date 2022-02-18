@@ -98,6 +98,7 @@ public class UIController : MonoBehaviour
 		DisablePanel(mainPanel);
 	}
 
+	//TODO Move to separate script HelpController with cost, separate panel etc.
 	public void Help()
 	{
 		var ai = gameplayMazeRenderer.ai.GetComponent<AIController>();

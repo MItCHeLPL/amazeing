@@ -5,6 +5,7 @@ using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("Movement")]
     [SerializeField] private float moveMultiplier = 1.0f; //Distance to move per movement call
 
     [SerializeField] private LayerMask blockLayer; //Layer to colide against
@@ -13,8 +14,9 @@ public class PlayerController : MonoBehaviour
     private MazeRenderer mazeRenderer;
     private GameMenager gameMenager;
 
-    [SerializeField] private Transform GFX; //player GFX
-    [SerializeField] private float animSpeed = 0.15f; //playter GFX animation speed
+    [Header("Player GFX")]
+    [SerializeField] private Transform GFX; 
+    [SerializeField] private float animSpeed = 0.15f;
 
     private float currentAngle = 180;
 
@@ -22,13 +24,23 @@ public class PlayerController : MonoBehaviour
     private IEnumerator MoveAnimCoroutine;
     private bool moveAnimationPlaying = false;
 
+    //Trail
+    private TrailGenerator trailGenerator;
+    [SerializeField] private bool trailLengthBasedOnMazeSize = true;
+
 	private void Start()
 	{
-        //Get UI
         ui = GameObject.Find("UI").GetComponent<UIController>();
         ui.SetPlayerComponent(gameObject);
 
         mazeRenderer = GetComponentInParent<MazeRenderer>();
+
+        //Get trail and set amount of points in trail based on maze size
+        trailGenerator = GetComponent<TrailGenerator>();
+        if(trailLengthBasedOnMazeSize)
+		{
+            trailGenerator.pointAmoutToShow = ExtendedMathf.Map(mazeRenderer.mazeSize, mazeRenderer.minMazeSize, mazeRenderer.maxMazeSize, 3, trailGenerator.trailPoints.Count);
+        }
 
         gameMenager = ui.gameMenager;
     }
@@ -41,25 +53,30 @@ public class PlayerController : MonoBehaviour
 		{
             MakeMove(dir);
         }
-        else if(hit.collider.CompareTag("Finish")) //when player crosses the finish line
+        else if(hit.collider.CompareTag("Finish"))
 		{
             gameMenager.StopGame();
 		}
-        else if (hit.collider.CompareTag("Key")) //when player collected key
+        else if (hit.collider.CompareTag("Key"))
         {
             //Move into key position
             MakeMove(dir);  
 
             //Play Key animation
-            mazeRenderer.key.GetComponent<KeyAnimation>().PlayAnimation(5.0f);
+            mazeRenderer.key.GetComponent<KeyAnimation>().PlayAnimation();
         }
     }
 
     private void MakeMove(Vector2 dir)
 	{
+        //Trail
+        trailGenerator.AddPoint();
+
+        //Move player
         transform.localPosition += new Vector3(dir.x * moveMultiplier, -dir.y * moveMultiplier, 0); //Move
 
-        gameMenager.ChangeScore(gameMenager.score += 1); //Add score
+        //Score
+        gameMenager.ChangeScore(gameMenager.score += 1);
 
         //GFX Animation
         //if animation is played stop it and start new animation to the new position
@@ -95,7 +112,7 @@ public class PlayerController : MonoBehaviour
             newAngle = Mathf.LerpAngle(currentAngle, endAngle, t);
  
             GFX.position = newPos;
-            GFX.rotation = Quaternion.Euler(new Vector3(0, 0, newAngle));
+            GFX.rotation = Quaternion.Euler(new Vector3(0, 0, newAngle)); //Rotate player towards direction
 
             yield return null;
         }

@@ -122,3 +122,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bac90d8b31833914d8c35e48656d6752, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animLength: 0.75
+  speedCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2.9147465
+      outSlope: 2.9147465
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.34297714
+    - serializedVersion: 3
+      time: 0.9989624
+      value: 1
+      inSlope: 0.26218042
+      outSlope: 0.26218042
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 1
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

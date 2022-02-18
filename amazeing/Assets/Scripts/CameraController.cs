@@ -91,7 +91,6 @@ public class CameraController : MonoBehaviour
                 }
             }
         
-            //TODO check how zoom works on mobile and maybe add isTouchStartInGameplayPanel to if
             //Touch input zoom
             if (Input.touchCount == 2)
             {
