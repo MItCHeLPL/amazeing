@@ -25,7 +25,7 @@ public class ColorRandomizer : MonoBehaviour
 	public void RandomizeColor()
     {
         sr = GetComponent<SpriteRenderer>();
-        color = new Color(0, 0, 0, 1); //base color
+        color = new Color(0, 0, 0, sr.color.a); //base color
 
         color.r = Random.Range(0, colorCap); //random chanell consistent between walls
 
@@ -38,7 +38,7 @@ public class ColorRandomizer : MonoBehaviour
     public void RandomizeColor(int seed)
 	{
         sr = GetComponent<SpriteRenderer>();
-        color = new Color(0, 0, 0, 1); //base color
+        color = new Color(0, 0, 0, sr.color.a); //base color
 
         Random.InitState(seed); //seed
         color.r = Random.Range(0, colorCap); //random chanell consistent between walls

@@ -30,7 +30,7 @@ public class MazeRenderer : MonoBehaviour
     [SerializeField] private bool drawOnStart = false;
 
     //Colorize maze walls to random color
-    [SerializeField] private bool colorize = true;
+    public bool colorize = true;
 
     //Prefabs and instances
     [SerializeField] private Transform wallPrefab = null; 
@@ -71,6 +71,11 @@ public class MazeRenderer : MonoBehaviour
 		{
             mazeWidth = mazeSize;
             mazeHeight = mazeSize;
+        }
+        else
+        {
+            //set maze size from width and height
+            mazeSize = (int)Mathf.Sqrt(mazeWidth * mazeHeight);
         }
 
         //Draw maze at start

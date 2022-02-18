@@ -42,6 +42,14 @@ public class PlayerController : MonoBehaviour
             trailGenerator.pointAmoutToShow = ExtendedMathf.Map(mazeRenderer.mazeSize, mazeRenderer.minMazeSize, mazeRenderer.maxMazeSize, 3, trailGenerator.trailPoints.Count);
         }
 
+        //set same color as maze to player and trail
+        if(mazeRenderer.colorize)
+		{
+            GFX.GetComponent<ColorRandomizer>().RandomizeColor(mazeRenderer.mazeSeed);
+
+            trailGenerator.Colorize(mazeRenderer.mazeSeed);
+        }
+
         gameMenager = ui.gameMenager;
     }
 

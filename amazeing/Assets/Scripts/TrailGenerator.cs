@@ -115,18 +115,18 @@ public class TrailGenerator : MonoBehaviour
 				//currentIndex:  0  1  2  3  4  5  0  1  2  3  4  5  
 				//oldIndex:     -5 -4 -3 -2 -1  0  1  2  3  4  5  0 
 
-				float val = 0;
+				float fraction = 0;
 				if(currentIndex < pointIndex)
 				{
-					val = 1 - ((float)(currentIndex - (pointIndex - (pointAmoutToShow + 1))) / pointAmoutToShow);
+					fraction = 1 - ((float)(currentIndex - (pointIndex - (pointAmoutToShow + 1))) / pointAmoutToShow);
 				}
 				else
 				{
-					 val = 1 - ((float)(currentIndex - pointIndex) / pointAmoutToShow);
+					fraction = 1 - ((float)(currentIndex - pointIndex) / pointAmoutToShow);
 				}
 
 				//Scale this point between min and max point scale
-				scale = ExtendedMathf.MapFrom01(val, trailPointMinScale, trailPointMaxScale);
+				scale = ExtendedMathf.MapFrom01(fraction, trailPointMinScale, trailPointMaxScale);
 			}
 			else
 			{
@@ -154,6 +154,15 @@ public class TrailGenerator : MonoBehaviour
 			trailPoint.localScale = new Vector3(newScale, newScale, newScale);
 
 			yield return null;
+		}
+	}
+
+
+	public void Colorize(int seed)
+	{
+		foreach(Transform trailPoint in trailPoints)
+		{
+			trailPoint.GetComponent<ColorRandomizer>().RandomizeColor(seed);
 		}
 	}
 }
