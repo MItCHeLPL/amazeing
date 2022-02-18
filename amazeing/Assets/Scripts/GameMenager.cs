@@ -11,6 +11,8 @@ public class GameMenager : MonoBehaviour
 
     [SerializeField] private Slider raceModeTimer = null; //Slider form race mode timer
 
+    [SerializeField] private GameObject loadingScreen = null;
+
     public int lvlCount = 100; //Total lvl count
     private bool normalGameMode = true; //Normal/Race mode
 
@@ -29,9 +31,8 @@ public class GameMenager : MonoBehaviour
     }
     private IEnumerator StartGameCoroutine(int lvlNumber, bool normal)
 	{
-
-        //TODO ENABLE LOADING SCREEN
-
+        //Enable loading screen
+        loadingScreen.SetActive(true);
 
         bool maze = false;
         maze = mazeRenderer.GenerateMazeForGameplay(lvlNumber, lvlCount); //Generate maze
@@ -68,9 +69,9 @@ public class GameMenager : MonoBehaviour
         //Camera controller
         camController.EnableGameplayCamera(); //Enable gameplay camera settings
 
-
-        //TODO DISABLE LOADING SCREEN
-
+        //Disable loading screen after finished setting everything up and animation played at least once
+        yield return new WaitUntil(() => loadingScreen.GetComponent<LoadingScreenAnimation>().finishedAnimationOnece);    
+        loadingScreen.SetActive(false);
 
         //Start counting the time
         gameTimer = GameTimer();

@@ -123,7 +123,10 @@ public class UIController : MonoBehaviour
 	public void UpdateTimeValues(float time)
 	{
 		//Round to 2 decimap places
-		time = (Mathf.Round(time * 100)) / 100.0f;
+		//time = (Mathf.Round(time * 100)) / 100.0f;
+
+		//Round time down
+		time = Mathf.Floor(time);
 
 		//Update value text
 		pauseTimeValue.SetText(time.ToString() + " sec");
