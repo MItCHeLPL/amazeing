@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
         }
         else if(hit.collider.CompareTag("Finish"))
 		{
-            gameMenager.StopGame();
+            gameMenager.StopGame(true);
 		}
         else if (hit.collider.CompareTag("Key"))
         {

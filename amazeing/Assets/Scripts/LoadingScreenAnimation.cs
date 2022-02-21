@@ -28,10 +28,6 @@ public class LoadingScreenAnimation : MonoBehaviour
     {
         while(isActiveAndEnabled)
 		{
-            text.SetText("");
-
-            yield return new WaitForSecondsRealtime(timeBetweenDots);
-
             text.SetText(".");
 
             yield return new WaitForSecondsRealtime(timeBetweenDots);
@@ -41,6 +37,10 @@ public class LoadingScreenAnimation : MonoBehaviour
             yield return new WaitForSecondsRealtime(timeBetweenDots);
 
             text.SetText("...");
+
+            yield return new WaitForSecondsRealtime(timeBetweenDots);
+
+            text.SetText("");
 
             yield return new WaitForSecondsRealtime(timeBetweenDots);
 

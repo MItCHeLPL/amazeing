@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class GameMenager : MonoBehaviour
 {
@@ -23,6 +24,9 @@ public class GameMenager : MonoBehaviour
     private IEnumerator gameTimer; //Game Timer Coroutine
 
     [SerializeField] private float raceModeTimeMultiplier = 0.66f; //Multiply time that player has to finish lvl in race mode
+
+    [SerializeField] private UnityEvent OnWin;
+    [SerializeField] private UnityEvent OnLoose;
 
     //Start Level
     public void StartGame(int lvlNumber, bool normal)
@@ -118,10 +122,19 @@ public class GameMenager : MonoBehaviour
     }
 
     //Endgame
-    public void StopGame()
+    public void StopGame(bool win)
 	{
         //Stop game timer
         StopCoroutine(gameTimer);
+
+        if(win)
+		{
+            OnWin.Invoke();
+        }
+        else
+		{
+            OnLoose.Invoke();
+        }
 
         //UI
         uiController.EndGameAction();
@@ -167,7 +180,7 @@ public class GameMenager : MonoBehaviour
                 //when times runs out
                 if(raceModeTimer.value == raceModeTimer.minValue)
 				{
-                    StopGame();
+                    StopGame(false);
                 }
             }
 

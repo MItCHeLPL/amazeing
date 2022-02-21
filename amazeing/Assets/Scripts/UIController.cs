@@ -129,8 +129,10 @@ public class UIController : MonoBehaviour
 		time = Mathf.Floor(time);
 
 		//Update value text
-		pauseTimeValue.SetText(time.ToString() + " sec");
-		endgameTimeValue.SetText(time.ToString() + " sec");
+		//pauseTimeValue.SetText(time.ToString() + " sec");
+		//endgameTimeValue.SetText(time.ToString() + " sec");
+		pauseTimeValue.SetText(time.ToString());
+		endgameTimeValue.SetText(time.ToString());
 	}
 
 	//Refresh Score
