@@ -106,7 +106,8 @@ public class AIController : MonoBehaviour
         for(int i=0; i<path.transform.childCount; i++)
 		{
             Transform pathPoint = path.transform.GetChild(i);
-            StartCoroutine(ShowPathPartCoroutine(pathPoint, ((i * pathPointVisibilityOffset) / pathLength)));
+            //StartCoroutine(ShowPathPartCoroutine(pathPoint, ((i * pathPointVisibilityOffset) / pathLength))); //Show path with duration based on path length
+            StartCoroutine(ShowPathPartCoroutine(pathPoint, (i * pathPointVisibilityOffset))); //Show path with static duration
         }
     }
     private IEnumerator ShowPathPartCoroutine(Transform pathPoint, float timeToWait)

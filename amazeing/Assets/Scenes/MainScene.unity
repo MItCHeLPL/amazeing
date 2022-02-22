@@ -2161,9 +2161,9 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
-  m_enableVertexGradient: 1
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+  m_enableVertexGradient: 0
   m_colorMode: 0
   m_fontColorGradient:
     topLeft: {r: 0, g: 0, b: 0, a: 1}
@@ -2189,7 +2189,7 @@ MonoBehaviour:
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_characterSpacing: 0
+  m_characterSpacing: -12
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -2694,8 +2694,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -5, y: 0}
-  m_SizeDelta: {x: 20, y: 0}
+  m_AnchoredPosition: {x: -10, y: 0}
+  m_SizeDelta: {x: 35, y: 0}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &267434068
 MonoBehaviour:
@@ -2898,7 +2898,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -0.00012207031}
-  m_SizeDelta: {x: 0, y: 1670}
+  m_SizeDelta: {x: 0, y: 1500}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &300833520
 MonoBehaviour:
@@ -2917,7 +2917,9 @@ MonoBehaviour:
   spaceBetweenButtons: 250
   buttonWidth: 150
   baseYOffset: 150
+  splitEvery: 100
   normalMode: 0
+  disableLockedLvls: 1
   gameMenager: {fileID: 479135189}
   ui: {fileID: 1241331537}
 --- !u!1 &302946250
@@ -3863,7 +3865,10 @@ MonoBehaviour:
   camController: {fileID: 519420030}
   raceModeTimer: {fileID: 704797015}
   loadingScreen: {fileID: 1593276970}
-  lvlCount: 100
+  lvlCount: 999
+  ClampMaxMazeSizeToLvl: 100
+  lastUnlockedLvl: 1
+  lastRaceUnlockedLvl: 1
   score: 0
   pathLength: 0
   gameTime: 0
@@ -5682,8 +5687,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -5, y: 0}
-  m_SizeDelta: {x: 20, y: 0}
+  m_AnchoredPosition: {x: -10, y: 0}
+  m_SizeDelta: {x: 35, y: 0}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &872596975
 MonoBehaviour:
@@ -8020,7 +8025,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -17, y: 0}
+  m_SizeDelta: {x: -27, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1235419783
 MonoBehaviour:
@@ -8201,6 +8206,7 @@ MonoBehaviour:
   endgameTimeValue: {fileID: 184786901}
   pauseTimeValue: {fileID: 833806006}
   lvlLabel: {fileID: 1121193180}
+  help: {fileID: 2045739464}
   mainPanel: {fileID: 1952323310}
   playPanel: {fileID: 154105821}
   aboutPanel: {fileID: 468575805}
@@ -10628,7 +10634,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -0.00012207031}
-  m_SizeDelta: {x: 0, y: 1670}
+  m_SizeDelta: {x: 0, y: 1500}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1674622882
 MonoBehaviour:
@@ -10647,7 +10653,9 @@ MonoBehaviour:
   spaceBetweenButtons: 250
   buttonWidth: 150
   baseYOffset: 150
+  splitEvery: 100
   normalMode: 1
+  disableLockedLvls: 1
   gameMenager: {fileID: 479135189}
   ui: {fileID: 1241331537}
 --- !u!1 &1745707631
@@ -12128,6 +12136,7 @@ GameObject:
   - component: {fileID: 2045739463}
   - component: {fileID: 2045739462}
   - component: {fileID: 2045739461}
+  - component: {fileID: 2045739464}
   m_Layer: 5
   m_Name: HelpButton
   m_TagString: Untagged
@@ -12199,9 +12208,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1241331537}
-        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
-        m_MethodName: Help
+      - m_Target: {fileID: 2045739464}
+        m_TargetAssemblyTypeName: HelpController, Assembly-CSharp
+        m_MethodName: ShowPath
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -12249,6 +12258,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2045739459}
   m_CullTransparentMesh: 1
+--- !u!114 &2045739464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045739459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 037fb020362983243a5a7a3784c9816b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mazeRenderer: {fileID: 1618011856}
+  image: {fileID: 89265091}
+  activeColor: {r: 0, g: 0, b: 0, a: 1}
+  deactivatedColor: {r: 0, g: 0, b: 0, a: 0.30588236}
+  uses: 1
 --- !u!1 &2064325600
 GameObject:
   m_ObjectHideFlags: 0

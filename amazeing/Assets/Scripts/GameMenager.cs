@@ -15,7 +15,11 @@ public class GameMenager : MonoBehaviour
     [SerializeField] private GameObject loadingScreen = null;
 
     public int lvlCount = 100; //Total lvl count
+    public int ClampMaxMazeSizeToLvl = 100; //every level after this value uses max maze size
     private bool normalGameMode = true; //Normal/Race mode
+
+    [HideInInspector] public int lastUnlockedLvl = 1;
+    [HideInInspector] public int lastRaceUnlockedLvl = 1;
 
     public int score = 0; //Player score
     public int pathLength = 0; //Total path to finish through key position
@@ -28,8 +32,13 @@ public class GameMenager : MonoBehaviour
     [SerializeField] private UnityEvent OnWin;
     [SerializeField] private UnityEvent OnLoose;
 
-    //Start Level
-    public void StartGame(int lvlNumber, bool normal)
+	private void Start()
+	{
+        LoadPlayerPrefs();
+    }
+
+	//Start Level
+	public void StartGame(int lvlNumber, bool normal)
 	{
         StartCoroutine(StartGameCoroutine(lvlNumber, normal)); //Start game starter coroutine
     }
@@ -39,7 +48,8 @@ public class GameMenager : MonoBehaviour
         loadingScreen.SetActive(true);
 
         bool maze = false;
-        maze = mazeRenderer.GenerateMazeForGameplay(lvlNumber, lvlCount); //Generate maze
+        //maze = mazeRenderer.GenerateMazeForGameplay(lvlNumber, lvlCount); //Generate maze
+        maze = mazeRenderer.GenerateMazeForGameplay(lvlNumber, ClampMaxMazeSizeToLvl); //Generate maze
 
         yield return new WaitUntil(() => maze); //Wait until maze is fully generated
 
@@ -130,6 +140,17 @@ public class GameMenager : MonoBehaviour
         if(win)
 		{
             OnWin.Invoke();
+
+            if(lastUnlockedLvl == mazeRenderer.mazeSeed && normalGameMode)
+			{
+                lastUnlockedLvl++;
+                SavePlayerPrefs();
+            }
+            else if(lastRaceUnlockedLvl == mazeRenderer.mazeSeed && !normalGameMode)
+			{
+                lastRaceUnlockedLvl++;
+                SavePlayerPrefs();
+            }
         }
         else
 		{
@@ -196,5 +217,27 @@ public class GameMenager : MonoBehaviour
 
         //Ui
         uiController.UpdateScoreValues(score);
+    }
+
+
+    private void LoadPlayerPrefs()
+    {
+        if (!PlayerPrefs.HasKey("LastUnlockedLvl"))
+        {
+            SavePlayerPrefs();
+        }
+        else
+		{
+            lastUnlockedLvl = PlayerPrefs.GetInt("LastUnlockedLvl");
+            lastRaceUnlockedLvl = PlayerPrefs.GetInt("LastRaceUnlockedLvl");
+        }
+    }
+
+    private void SavePlayerPrefs()
+    {
+        PlayerPrefs.SetInt("LastUnlockedLvl", lastUnlockedLvl);
+        PlayerPrefs.SetInt("LastRaceUnlockedLvl", lastRaceUnlockedLvl);
+
+        PlayerPrefs.Save();
     }
 }

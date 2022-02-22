@@ -211,8 +211,8 @@ MonoBehaviour:
   nodeSize: 0.5
   pathPrefab: {fileID: 3920902015383458246, guid: 9a3ea3c394d10d44f94af1eef19b8069, type: 3}
   pathLength: 0
-  pathPointVisibilityTime: 2
-  pathPointVisibilityOffset: 8
+  pathPointVisibilityTime: 0.75
+  pathPointVisibilityOffset: 0.075
   pathPointMaxScale: 0.25
   pathCalculated: 0
 --- !u!61 &6990842214134343293

@@ -33,6 +33,9 @@ public class UIController : MonoBehaviour
 	//Lvl
 	public TextMeshProUGUI lvlLabel;
 
+	//Help
+	public HelpController help;
+
 	//Menu Panels
 	[SerializeField] private GameObject mainPanel;
 	[SerializeField] private GameObject playPanel;
@@ -98,17 +101,6 @@ public class UIController : MonoBehaviour
 		DisablePanel(mainPanel);
 	}
 
-	//TODO Move to separate script HelpController with cost, separate panel etc.
-	public void Help()
-	{
-		var ai = gameplayMazeRenderer.ai.GetComponent<AIController>();
-
-		//TODO add cost to using help
-
-		ai.ShowPath();
-	}
-	
-
 	//Clear UI after lvl end
 	public void ClearLevel()
 	{
@@ -117,6 +109,9 @@ public class UIController : MonoBehaviour
 
 		//Clear time counters
 		UpdateTimeValues(0);
+
+		//Re-enable help
+		help.Reset();
 	}
 
 	//Refresh Time

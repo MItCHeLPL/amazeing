@@ -18,8 +18,11 @@ public class LevelsGenerator : MonoBehaviour
 
     [SerializeField] private int baseYOffset = 50;
 
+    [SerializeField] private int splitEvery = 100;
+
     [SerializeField] private bool normalMode = true; //generate buttons that start lvl in hard or normal mode
 
+    [SerializeField] private bool disableLockedLvls = true;
 
     [SerializeField] private GameMenager gameMenager;
     [SerializeField] private UIController ui;
@@ -29,29 +32,59 @@ public class LevelsGenerator : MonoBehaviour
     150 height
     1080 screen width*/
 
-    void Start()
+    void Awake()
     {
-        //set scrollview height to fit all buttons inside
-        RectTransform rect = gameObject.GetComponent<RectTransform>();
-        int height = baseYOffset + (gameMenager.lvlCount / columnAmount) * spaceBetweenButtons;
-        rect.sizeDelta = new Vector2(rect.sizeDelta.x, height);
-
         GenerateLevels();
     }
 
-    private void GenerateLevels()
+	private void OnEnable()
 	{
+        //If finished all from splitEvery generate more levels
+        if (gameMenager.lastUnlockedLvl % splitEvery == 0 || gameMenager.lastRaceUnlockedLvl % splitEvery == 0)
+		{
+            DeleteButtons();
+            GenerateLevels();
+        }
+        else
+		{
+            UpdateLockState();
+        }
+    }
+
+	private void GenerateLevels()
+	{
+        //Show only unlocked levels + rest to splitEvery
+        int amountToDisplay = gameMenager.lvlCount;
+        if (normalMode)
+        {
+            amountToDisplay = (gameMenager.lastUnlockedLvl / splitEvery) * splitEvery;
+        }
+        else
+        {
+            amountToDisplay = (gameMenager.lastRaceUnlockedLvl / splitEvery) * splitEvery;
+        }
+        amountToDisplay += splitEvery;
+        amountToDisplay = Mathf.Clamp(amountToDisplay, splitEvery, gameMenager.lvlCount);
+
+        //set scrollview height to fit all buttons inside
+        RectTransform rect = gameObject.GetComponent<RectTransform>();
+        int height = (baseYOffset * 2) + (amountToDisplay / columnAmount) * spaceBetweenButtons;
+        rect.sizeDelta = new Vector2(rect.sizeDelta.x, height);
+
+        //Generate
         //Y
-        for(int i=0; i<(gameMenager.lvlCount / columnAmount) + 1; i++)
+        for (int i=0; i<(amountToDisplay / columnAmount) + 1; i++)
 		{
             //X
             for(int j=0; j<columnAmount; j++)
 			{
                 int lvlIndex = (i * columnAmount) + j + 1;
 
-                if (lvlIndex <= gameMenager.lvlCount)
+                if (lvlIndex <= amountToDisplay)
                 {
-                    int posX = columnAmount % 2 == 0 ? (spaceBetweenButtons / 2) + spaceBetweenButtons * (columnAmount / 2) * -1 + (spaceBetweenButtons * j) : (buttonWidth / 2) + spaceBetweenButtons * (columnAmount / 2) * -1 + (spaceBetweenButtons * j);
+                    int posX = columnAmount % 2 == 0 ? 
+                        (spaceBetweenButtons / 2) + spaceBetweenButtons * (columnAmount / 2) * -1 + (spaceBetweenButtons * j) : 
+                        (buttonWidth / 2) + spaceBetweenButtons * (columnAmount / 2) * -1 + (spaceBetweenButtons * j);
 
                     int posY = -baseYOffset - (spaceBetweenButtons * i);
 
@@ -75,5 +108,49 @@ public class LevelsGenerator : MonoBehaviour
 
         //Add onclick to start game at each button
         button.onClick.AddListener(() => gameMenager.StartGame(lvlNumber, normalMode));
+
+        if(disableLockedLvls)
+		{
+            if (normalMode)
+            {
+                button.interactable = lvlNumber <= gameMenager.lastUnlockedLvl;
+            }
+            else
+            {
+                button.interactable = lvlNumber <= gameMenager.lastRaceUnlockedLvl;
+            }
+
+            button.GetComponent<ButtonEnabler>().UpdateColor();
+        }
+    }
+
+    private void UpdateLockState()
+    {
+        if (disableLockedLvls)
+        {
+            for (int i = 0; i < gameMenager.lastUnlockedLvl; i++)
+            {
+                Button button = transform.GetChild(i).GetComponent<Button>();
+
+                if(normalMode)
+				{
+                    button.interactable = (i + 1) <= gameMenager.lastUnlockedLvl;
+                }
+                else
+				{
+                    button.interactable = (i + 1) <= gameMenager.lastRaceUnlockedLvl;
+                }
+
+                button.GetComponent<ButtonEnabler>().UpdateColor();
+            }
+        }
+	}
+
+    private void DeleteButtons()
+	{
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
     }
 }
