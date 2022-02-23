@@ -149,6 +149,7 @@ MonoBehaviour:
   GFX: {fileID: 9016758736842370261}
   animSpeed: 0.15
   trailLengthBasedOnMazeSize: 1
+  audioOnMove: Click
 --- !u!61 &3561655413920829168
 BoxCollider2D:
   m_ObjectHideFlags: 0

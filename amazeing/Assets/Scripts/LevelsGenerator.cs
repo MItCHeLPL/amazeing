@@ -128,7 +128,9 @@ public class LevelsGenerator : MonoBehaviour
     {
         if (disableLockedLvls)
         {
-            for (int i = 0; i < gameMenager.lastUnlockedLvl; i++)
+            int amount = normalMode ? gameMenager.lastUnlockedLvl : gameMenager.lastRaceUnlockedLvl;
+
+            for (int i = 0; i < amount; i++)
             {
                 Button button = transform.GetChild(i).GetComponent<Button>();
 

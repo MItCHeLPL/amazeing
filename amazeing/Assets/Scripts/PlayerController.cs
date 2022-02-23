@@ -28,7 +28,11 @@ public class PlayerController : MonoBehaviour
     private TrailGenerator trailGenerator;
     [SerializeField] private bool trailLengthBasedOnMazeSize = true;
 
-	private void Start()
+    //Audio
+    private AudioController audioController = null;
+    [SerializeField] private string audioOnMove = "";
+
+    private void Start()
 	{
         ui = GameObject.Find("UI").GetComponent<UIController>();
         ui.SetPlayerComponent(gameObject);
@@ -51,6 +55,8 @@ public class PlayerController : MonoBehaviour
         }
 
         gameMenager = ui.gameMenager;
+
+        audioController = gameMenager.audioController;
     }
 
     public void MovePlayer(Vector2 dir)
@@ -85,6 +91,9 @@ public class PlayerController : MonoBehaviour
 
         //Score
         gameMenager.ChangeScore(gameMenager.score += 1);
+
+        //Audio
+        audioController.Play(audioOnMove);
 
         //GFX Animation
         //if animation is played stop it and start new animation to the new position

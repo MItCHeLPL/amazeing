@@ -14,6 +14,8 @@ public class GameMenager : MonoBehaviour
 
     [SerializeField] private GameObject loadingScreen = null;
 
+    public AudioController audioController = null;
+
     public int lvlCount = 100; //Total lvl count
     public int ClampMaxMazeSizeToLvl = 100; //every level after this value uses max maze size
     private bool normalGameMode = true; //Normal/Race mode
@@ -29,6 +31,8 @@ public class GameMenager : MonoBehaviour
 
     [SerializeField] private float raceModeTimeMultiplier = 0.66f; //Multiply time that player has to finish lvl in race mode
 
+    [SerializeField] private string audioOnStartFinish = "";
+
     [SerializeField] private UnityEvent OnWin;
     [SerializeField] private UnityEvent OnLoose;
 
@@ -40,6 +44,9 @@ public class GameMenager : MonoBehaviour
 	//Start Level
 	public void StartGame(int lvlNumber, bool normal)
 	{
+        //Play audio
+        audioController.Play(audioOnStartFinish);
+
         StartCoroutine(StartGameCoroutine(lvlNumber, normal)); //Start game starter coroutine
     }
     private IEnumerator StartGameCoroutine(int lvlNumber, bool normal)
@@ -137,11 +144,14 @@ public class GameMenager : MonoBehaviour
         //Stop game timer
         StopCoroutine(gameTimer);
 
-        if(win)
+        if (win)
 		{
             OnWin.Invoke();
 
-            if(lastUnlockedLvl == mazeRenderer.mazeSeed && normalGameMode)
+            //Play audio
+            audioController.Play(audioOnStartFinish);
+
+            if (lastUnlockedLvl == mazeRenderer.mazeSeed && normalGameMode)
 			{
                 lastUnlockedLvl++;
                 SavePlayerPrefs();
