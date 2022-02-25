@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
 
     private float currentAngle = 180;
 
-    //GFX coroutine
+    //GFX coroutines
     private IEnumerator MoveAnimCoroutine;
     private bool moveAnimationPlaying = false;
 
@@ -103,11 +103,14 @@ public class PlayerController : MonoBehaviour
             moveAnimationPlaying = false;
         }
         //Start Coroutine
-        MoveAnimCoroutine = MoveAnimation(transform.position, dir);
+        MoveAnimCoroutine = MoveAnimation(transform.position);
         StartCoroutine(MoveAnimCoroutine);
+
+        //Rotate towards move direction
+        StartCoroutine(RotateAnimation(dir));
     }
 
-    private IEnumerator MoveAnimation(Vector2 endPos, Vector2 dir)
+    private IEnumerator MoveAnimation(Vector2 endPos)
 	{
         moveAnimationPlaying = true;
 
@@ -115,27 +118,43 @@ public class PlayerController : MonoBehaviour
 
         Vector2 startPos = GFX.position;
 
-        //Angle towards direction with offset
-        float endAngle = (Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg) + 90.0f;
-
         Vector2 newPos;
-        float newAngle;
 
         while (t < 1)
         {
             t += Time.deltaTime / animSpeed;
 
             newPos = Vector2.Lerp(startPos, endPos, t);
-            newAngle = Mathf.LerpAngle(currentAngle, endAngle, t);
  
             GFX.position = newPos;
+
+            yield return null;
+        }
+
+        moveAnimationPlaying = false;
+    }
+
+    private IEnumerator RotateAnimation(Vector2 dir)
+    {
+        float t = 0f;
+
+        //Angle towards direction with offset
+        float endAngle = (Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg) + 90.0f;
+
+        float newAngle;
+
+        while (t < 1)
+        {
+            t += Time.deltaTime / animSpeed;
+
+            newAngle = Mathf.LerpAngle(currentAngle, endAngle, t);
+
             GFX.rotation = Quaternion.Euler(new Vector3(0, 0, newAngle)); //Rotate player towards direction
 
             yield return null;
         }
 
+        GFX.rotation = Quaternion.Euler(new Vector3(0, 0, endAngle));
         currentAngle = endAngle;
-
-        moveAnimationPlaying = false;
     }
 }
