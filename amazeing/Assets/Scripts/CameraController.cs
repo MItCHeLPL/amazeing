@@ -63,8 +63,6 @@ public class CameraController : MonoBehaviour
     {
         if (isInGameplay)
         {
-            //Based on: https://twitter.com/astoldbywaldo/
-
             //Screen Input
             if (Input.GetMouseButtonDown(0))
             {

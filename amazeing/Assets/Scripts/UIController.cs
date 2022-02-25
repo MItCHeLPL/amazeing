@@ -10,7 +10,7 @@ public class UIController : MonoBehaviour
 	//Get Scripts
 	private PlayerController player;
 	[SerializeField] private MazeRenderer gameplayMazeRenderer;
-	public GameMenager gameMenager;
+	public GameManager gameMenager;
 
 	//Panels
 	[SerializeField] private GameObject gameplayPanel;

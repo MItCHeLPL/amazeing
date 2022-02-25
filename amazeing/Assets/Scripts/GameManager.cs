@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 
-public class GameMenager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
 	public UIController uiController = null;
 	public MazeRenderer mazeRenderer = null;

@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
 
     private UIController ui;
     private MazeRenderer mazeRenderer;
-    private GameMenager gameMenager;
+    private GameManager gameMenager;
 
     [Header("Player GFX")]
     [SerializeField] private Transform GFX; 

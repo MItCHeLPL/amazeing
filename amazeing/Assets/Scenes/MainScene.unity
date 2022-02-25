@@ -3653,7 +3653,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -0.00012207031}
-  m_SizeDelta: {x: 0, y: 3000}
+  m_SizeDelta: {x: 0, y: 1200}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &394443687
 GameObject:
@@ -4050,7 +4050,7 @@ GameObject:
   - component: {fileID: 479135188}
   - component: {fileID: 479135189}
   m_Layer: 0
-  m_Name: GameMenager
+  m_Name: GameManager
   m_TagString: GameController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5730,8 +5730,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 16, y: 25}
-  m_SizeDelta: {x: -268, y: -50.000122}
+  m_AnchoredPosition: {x: 25, y: 25}
+  m_SizeDelta: {x: -150, y: -50.000122}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &842927435
 MonoBehaviour:
@@ -5753,33 +5753,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean at lectus
-    nec metus semper pretium. Vivamus a sodales augue, et ultrices nibh. Pellentesque
-    mollis lacus eget feugiat convallis. Suspendisse sodales neque in scelerisque
-    venenatis. Donec congue lectus et nisl commodo accumsan. Vestibulum sed felis
-    eget erat porttitor iaculis vel quis nunc. Phasellus semper purus arcu, id dignissim
-    mi dapibus ac. Aliquam eu hendrerit augue, ac porttitor velit. Integer risus
-    mauris, mattis vitae malesuada at, dictum eget turpis. Lorem ipsum dolor sit
-    amet, consectetur adipiscing elit. Aenean at lectus nec metus semper pretium.
-    Vivamus a sodales augue, et ultrices nibh. Pellentesque mollis lacus eget feugiat
-    convallis. Suspendisse sodales neque in scelerisque venenatis. Donec congue lectus
-    et nisl commodo accumsan. Vestibulum sed felis eget erat porttitor iaculis vel
-    quis nunc. Phasellus semper purus arcu, id dignissim mi dapibus ac. Aliquam eu
-    hendrerit augue, ac porttitor velit. Integer risus mauris, mattis vitae malesuada
-    at, dictum eget turpis. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    Aenean at lectus nec metus semper pretium. Vivamus a sodales augue, et ultrices
-    nibh. Pellentesque mollis lacus eget feugiat convallis. Suspendisse sodales neque
-    in scelerisque venenatis. Donec congue lectus et nisl commodo accumsan. Vestibulum
-    sed felis eget erat porttitor iaculis vel quis nunc. Phasellus semper purus arcu,
-    id dignissim mi dapibus ac. Aliquam eu hendrerit augue, ac porttitor velit. Integer
-    risus mauris, mattis vitae malesuada at, dictum eget turpis. Lorem ipsum dolor
-    sit amet, consectetur adipiscing elit. Aenean at lectus nec metus semper pretium.
-    Vivamus a sodales augue, et ultrices nibh. Pellentesque mollis lacus eget feugiat
-    convallis. Suspendisse sodales neque in scelerisque venenatis. Donec congue lectus
-    et nisl commodo accumsan. Vestibulum sed felis eget erat porttitor iaculis vel
-    quis nunc. Phasellus semper purus arcu, id dignissim mi dapibus ac. Aliquam eu
-    hendrerit augue, ac porttitor velit. Integer risus mauris, mattis vitae malesuada
-    at, dictum eget turpis. '
+  m_text: "Created by:\r\nMicha\u0142 Myszor\r\ngithub.com/MItCHeLPL\n\r\nThird-party:\r\nEngine:\nUnity
+    2020.3\n\r\nTools:\nA* Pathfinding Project\n\r\nAssets:\r\n40+ Simple Icons by
+    shuvadanil\n\r\nMaze generation algorithm based on:\nyoutube_unity_maze \ncreated
+    by:\ngithub.com/gamedolphin\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 49dae6b71b416f74cb704844dd621486, type: 2}
   m_sharedMaterial: {fileID: -7178718800943913037, guid: 49dae6b71b416f74cb704844dd621486, type: 2}
@@ -5814,7 +5791,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -6860,12 +6837,24 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 479135189}
-        m_TargetAssemblyTypeName: GameMenager, Assembly-CSharp
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: ResumeGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1241331537}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: DisablePanel
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 1540703185}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -10591,7 +10580,7 @@ GameObject:
   - component: {fileID: 1591053305}
   - component: {fileID: 1591053304}
   m_Layer: 0
-  m_Name: AudioController
+  m_Name: AudioManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

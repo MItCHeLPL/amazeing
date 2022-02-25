@@ -93,20 +93,20 @@ public class AudioController : MonoBehaviour
 	}
 	public void Stop(Sound s)
 	{
-		if (s != null && isPlaying(s))
+		if (s != null && IsPlaying(s))
 		{
 			s.source.Stop();
 		}
 	}
 
 
-	public bool isPlaying(string name)
+	public bool IsPlaying(string name)
 	{
 		Sound s = sounds.Find(sound => sound.name == name); //Find source
 
-		return isPlaying(s);
+		return IsPlaying(s);
 	}
-	public bool isPlaying(Sound s)
+	public bool IsPlaying(Sound s)
 	{
 		if (s != null)
 		{

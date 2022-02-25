@@ -24,7 +24,7 @@ public class LevelsGenerator : MonoBehaviour
 
     [SerializeField] private bool disableLockedLvls = true;
 
-    [SerializeField] private GameMenager gameMenager;
+    [SerializeField] private GameManager gameMenager;
     [SerializeField] private UIController ui;
 
     /*Default Settings:
