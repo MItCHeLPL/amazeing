@@ -59,7 +59,31 @@ public class PlayerController : MonoBehaviour
         audioController = gameMenager.audioController;
     }
 
-    public void MovePlayer(Vector2 dir)
+
+	private void Update()
+	{
+        if(gameMenager.isGameRunning)
+		{
+            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+            {
+                MovePlayer(Vector2.up);
+            }
+            else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
+            {
+                MovePlayer(Vector2.left);
+            }
+            else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
+            {
+                MovePlayer(Vector2.right);
+            }
+            else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
+            {
+                MovePlayer(Vector2.down);
+            }
+        }
+    }
+
+	public void MovePlayer(Vector2 dir)
 	{
         RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, .75f, blockLayer); //collision detection
 

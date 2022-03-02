@@ -29,6 +29,8 @@ public class GameManager : MonoBehaviour
     public float gameTime = 0.0f; //Game Timer
     private IEnumerator gameTimer; //Game Timer Coroutine
 
+    [HideInInspector] public bool isGameRunning = false;
+
     [SerializeField] private float raceModeTimeMultiplier = 0.66f; //Multiply time that player has to finish lvl in race mode
 
     [SerializeField] private string audioOnStartFinish = "";
@@ -97,6 +99,8 @@ public class GameManager : MonoBehaviour
         //Start counting the time
         gameTimer = GameTimer();
         StartCoroutine(gameTimer);
+
+        isGameRunning = true;
     }
 
     //Reset level and start next
@@ -128,6 +132,8 @@ public class GameManager : MonoBehaviour
 
         //UI
         uiController.UpdateTimeValues(gameTime);
+
+        isGameRunning = false;
     }
 
     //Resume
@@ -136,6 +142,8 @@ public class GameManager : MonoBehaviour
         //Resume Timer
         gameTimer = GameTimer();
         StartCoroutine(gameTimer);
+
+        isGameRunning = true;
     }
 
     //Endgame
@@ -143,6 +151,8 @@ public class GameManager : MonoBehaviour
 	{
         //Stop game timer
         StopCoroutine(gameTimer);
+
+        isGameRunning = false;
 
         if (win)
 		{
